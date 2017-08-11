@@ -41,3 +41,12 @@ yarn-error.log
 # System Files
 .DS_Store
 Thumbs.db
+
+#GO
+*.exe
+debug
+
+#Enviroment Variables
+.devenv.json
+cert.pem
+key.pem
