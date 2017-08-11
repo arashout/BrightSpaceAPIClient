@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"fmt"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -24,11 +25,11 @@ type Credentials struct {
 	Token        *AccessToken
 }
 
-//  AccessToken to get access token
+//  AccessToken ... to get access token
 type AccessToken struct {
-	Token     string `json:"access_token"`
-	TokenType string `json:"token_type"`
-	ExpiresIn int64  `json:"expires_in"`
+	TokenString string `json:"access_token"`
+	TokenType   string `json:"token_type"`
+	ExpiresIn   int64  `json:"expires_in"`
 }
 
 const (
@@ -61,6 +62,7 @@ func main() {
 	mux.Handle("/", http.FileServer(http.Dir("src")))
 	mux.HandleFunc("/auth", authHandler)
 	mux.HandleFunc("/callback", callbackHandler)
+	mux.HandleFunc("/search", searchHandler)
 
 	srv := &http.Server{
 		Addr:         ":" + port,
@@ -129,7 +131,28 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		panic(err)
 	}
-	log.Println(token.Token)
-	log.Println(token.ExpiresIn)
 	cred.Token = &token
+}
+
+func searchHandler(w http.ResponseWriter, r *http.Request) {
+	baseRoute := "/d2l/api/lp/"
+	version := "1.13"
+	apiCommand := "/users/"
+	fullURL := cred.HostURL + baseRoute + version + apiCommand
+
+	client := &http.Client{}
+	req, err := http.NewRequest("GET", fullURL, nil)
+	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("Authorization", "Bearer "+cred.Token.TokenString)
+
+	resp, err := client.Do(req)
+	if err != nil {
+		panic(err)
+	}
+	defer resp.Body.Close()
+
+	fmt.Println("response Status:", resp.Status)
+	fmt.Println("response Headers:", resp.Header)
+	body, _ := ioutil.ReadAll(resp.Body)
+	fmt.Println("response Body:", string(body))
 }
