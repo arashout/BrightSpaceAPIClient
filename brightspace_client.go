@@ -140,6 +140,7 @@ func (bsc *BrightspaceClient) RefreshHandler(w http.ResponseWriter, r *http.Requ
 
 // APIHandler ...
 func (bsc *BrightspaceClient) APIHandler(w http.ResponseWriter, r *http.Request) {
+	// TODO: Read Request Payload instead of hardcoding commands!
 	baseRoute := "/d2l/api/lp/"
 	version := "1.13"
 	apiCommand := "/users/"
@@ -147,19 +148,20 @@ func (bsc *BrightspaceClient) APIHandler(w http.ResponseWriter, r *http.Request)
 
 	req, err := http.NewRequest("GET", fullURL, nil)
 	req.Header.Set("Content-Type", "application/json")
-	req.Header.Set("Authorization", cred.Token.TokenType+" "+cred.Token.AccessToken)
+	req.Header.Set("Authorization", bsc.credentials.Token.TokenType+" "+bsc.credentials.Token.AccessToken)
 
 	resp, err := bsc.client.Do(req)
 	if err != nil {
-		log.Fatal(err)
+		log.Fatal(err.Error())
 	}
+	defer resp.Body.Close()
+	body, _ := ioutil.ReadAll(resp.Body)
+
 	// TODO: Deal with the case of a access token being expired!
 	if resp.StatusCode != 200 {
-		log.Panic(err)
+		http.Error(w, string(body), http.StatusBadRequest)
+		return
 	}
-
-	body, _ := ioutil.ReadAll(resp.Body)
-	resp.Body.Close()
 
 	w.Header().Set("Content-Type", "application/json")
 	w.Write(body)
@@ -169,13 +171,13 @@ func (bsc *BrightspaceClient) APIHandler(w http.ResponseWriter, r *http.Request)
 func (bsc *BrightspaceClient) sendAuthorizedRequestWithPayload(method string, url string, payload url.Values) *http.Response {
 	req, err := http.NewRequest("POST", tokenEndpoint, strings.NewReader(payload.Encode()))
 	if err != nil {
-		log.Fatal(err)
+		log.Fatal(err.Error())
 	}
-	req.SetBasicAuth(cred.ClientID, cred.ClientSecret)
+	req.SetBasicAuth(bsc.credentials.ClientID, bsc.credentials.ClientSecret)
 	req.Header.Add("Content-Type", "application/x-www-form-urlencoded")
 	resp, err := bsc.client.Do(req)
 	if err != nil {
-		log.Fatal(err)
+		log.Fatal(err.Error())
 	}
 	return resp
 }
@@ -183,7 +185,7 @@ func (bsc *BrightspaceClient) sendAuthorizedRequestWithPayload(method string, ur
 func createRedirectTo(basePath string, relativePath string) string {
 	u, err := url.Parse(basePath)
 	if err != nil {
-		log.Fatal(err)
+		log.Fatal(err.Error())
 	}
 	u.RawQuery = ""
 	u.Path = relativePath

@@ -31,10 +31,8 @@ const (
 	clientPort   = "3001"
 )
 
-var cred Credentials
-
 func main() {
-	cred = ReadJSONCredentials(credFilePath)
+	cred := ReadJSONCredentials(credFilePath)
 
 	// Check if the cert files are available.
 	err := httpscerts.Check("cert.pem", "key.pem")
