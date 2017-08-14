@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"net/url"
 	"strings"
+	"time"
 )
 
 // BrightspaceClient ...
@@ -15,6 +16,15 @@ type BrightspaceClient struct {
 	client        *http.Client
 	clientBaseURL string
 	state         string
+}
+
+// BrightspaceToken ... To get access token
+type BrightspaceToken struct {
+	AccessToken  string    `json:"access_token"`
+	RefreshToken string    `json:"refresh_token"`
+	TokenType    string    `json:"token_type"`
+	ExpiresIn    int64     `json:"expires_in"`
+	Expiration   time.Time `json:"expiration"`
 }
 
 const (
@@ -75,23 +85,19 @@ func (bsc *BrightspaceClient) AuthCallbackHandler(w http.ResponseWriter, r *http
 
 	// The response contains the access token and refresh token
 	resp := bsc.sendAuthorizedRequestWithPayload("POST", tokenEndpoint, payload)
-	if resp.StatusCode != http.StatusOK {
-		log.Fatal(resp.Status)
-	}
-
 	defer resp.Body.Close()
+
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
 		log.Fatal(err.Error())
 	}
 
-	var token BrightspaceToken
-
-	err = json.Unmarshal(body, &token)
-	if err != nil {
-		log.Fatal(err)
+	if resp.StatusCode != http.StatusOK {
+		http.Error(w, string(body), resp.StatusCode)
+		return
 	}
-	bsc.credentials.Token = &token
+
+	bsc.updateTokenFromJSON(body)
 
 	// Store data in a credential file to use refresh token for next time
 	StructToJSONFile(bsc.credentials, credFilePath)
@@ -113,29 +119,25 @@ func (bsc *BrightspaceClient) RefreshHandler(w http.ResponseWriter, r *http.Requ
 	// The response contains the access token and refresh token
 	resp := bsc.sendAuthorizedRequestWithPayload("POST", tokenEndpoint, payload)
 
-	if resp.StatusCode != http.StatusOK {
-		log.Fatal(resp.Status)
-	}
-
 	defer resp.Body.Close()
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
 		log.Fatal(err.Error())
 	}
-
-	var token BrightspaceToken
-
-	err = json.Unmarshal(body, &token)
-	if err != nil {
-		log.Fatal(err)
+	if resp.StatusCode != http.StatusOK {
+		http.Error(w, string(body), resp.StatusCode)
+		return
 	}
-	// Replace used up token with new token
-	bsc.credentials.Token = &token
+
+	bsc.updateTokenFromJSON(body)
 
 	// Store data in a credential file to use refresh token for next time
 	StructToJSONFile(bsc.credentials, credFilePath)
 
 	log.Printf("New Access/Refresh Token using Refresh Token:\n%s", JSONStringify(bsc.credentials.Token))
+
+	w.Header().Set("Content-Type", "application/json")
+	w.Write(body)
 }
 
 // APIHandler ...
@@ -158,8 +160,8 @@ func (bsc *BrightspaceClient) APIHandler(w http.ResponseWriter, r *http.Request)
 	body, _ := ioutil.ReadAll(resp.Body)
 
 	// TODO: Deal with the case of a access token being expired!
-	if resp.StatusCode != 200 {
-		http.Error(w, string(body), http.StatusBadRequest)
+	if resp.StatusCode != http.StatusOK {
+		http.Error(w, string(body), resp.StatusCode)
 		return
 	}
 
@@ -190,4 +192,13 @@ func createRedirectTo(basePath string, relativePath string) string {
 	u.RawQuery = ""
 	u.Path = relativePath
 	return u.String()
+}
+
+func (bsc *BrightspaceClient) updateTokenFromJSON(jsonBody []byte) {
+	err := json.Unmarshal(jsonBody, &bsc.credentials.Token)
+	if err != nil {
+		log.Fatal(err)
+	}
+	// Update the expiration field
+	bsc.credentials.Token.Expiration = time.Now().Local().Add(time.Second * time.Duration(bsc.credentials.Token.ExpiresIn))
 }

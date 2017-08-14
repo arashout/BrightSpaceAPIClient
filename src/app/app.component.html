@@ -1,7 +1,10 @@
 <section class="section">
     <div class="container">
         <app-status-bar></app-status-bar>
-        <app-command-bar></app-command-bar>
-        <app-results-container></app-results-container>
+        <app-command-bar
+        (onRetrievedResultSet)="displayAPIResults($event)"
+        ></app-command-bar>
+        <app-results-container>
+        </app-results-container>
     </div>
 </section>

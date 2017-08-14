@@ -8,7 +8,7 @@ import { ResultItemComponent } from './results-container/result-item/result-item
 import { ResultsContainerComponent } from './results-container/results-container.component';
 import { StatusBarComponent } from './status-bar/status-bar.component';
 
-import { BrightspaceAPIService } from './brightspace.api.service' 
+import { BrightspaceAPIService } from './shared/brightspace.api.service' 
 
 @NgModule({
   declarations: [

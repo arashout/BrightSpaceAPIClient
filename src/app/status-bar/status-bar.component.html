@@ -1,4 +1,4 @@
 <div class="columns is-centered status-bar">
-  <a *ngIf="!haveAccessToken" class="button is-warning">No Access Token!</a>
-  <a *ngIf="haveAccessToken" class="button is-info">{{ accessTokenExpiryTime }}</a>
+  <div *ngIf="!isValidAccessToken">Access Token: <span class="has-text-danger">Expired</span> </div>
+  <div *ngIf="isValidAccessToken">Access Token: <span class="has-text-success">Active</span> </div>
 </div>

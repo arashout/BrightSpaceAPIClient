@@ -4,9 +4,8 @@ import { Http } from '@angular/http';
 @Injectable()
 export class BrightspaceAPIService{
     constructor(private http: Http){}
-    getData(){
-        // Return observable
-        console.log(document.URL + "api")
-        return this.http.get(document.URL + "api");
-    }
+    // Note: These return observables
+    getAPIResults(){return this.http.get(document.URL + "api");}
+
+    getNewToken(){return this.http.get(document.URL + "refresh");}
 }

@@ -6,16 +6,11 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./status-bar.component.css']
 })
 export class StatusBarComponent {
-  haveAccessToken = false;
-  accessTokenExpiryTime = 10;
+  isValidAccessToken = false;
 
   constructor() {
     setTimeout(() => {
-      this.haveAccessToken = true;
+      this.isValidAccessToken = true;
     }, 5000);
-  }
-
-  getColor(){
-    return (this.haveAccessToken) ? {"backgroundColor":"green"} : {"backgroundColor":"red"}
   }
 }
