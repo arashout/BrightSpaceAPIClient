@@ -134,10 +134,11 @@ func (bsc *BrightspaceClient) RefreshHandler(w http.ResponseWriter, r *http.Requ
 	// Store data in a credential file to use refresh token for next time
 	StructToJSONFile(bsc.credentials, credFilePath)
 
-	log.Printf("New Access/Refresh Token using Refresh Token:\n%s", JSONStringify(bsc.credentials.Token))
+	jsonResponseString := JSONStringify(bsc.credentials.Token)
 
+	log.Printf("New Access/Refresh Token using Refresh Token:\n%s", jsonResponseString)
 	w.Header().Set("Content-Type", "application/json")
-	w.Write(body)
+	w.Write([]byte(jsonResponseString))
 }
 
 // APIHandler ...

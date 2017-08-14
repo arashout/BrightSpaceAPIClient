@@ -8,7 +8,8 @@ import { ResultItemComponent } from './results-container/result-item/result-item
 import { ResultsContainerComponent } from './results-container/results-container.component';
 import { StatusBarComponent } from './status-bar/status-bar.component';
 
-import { BrightspaceAPIService } from './shared/brightspace.api.service' 
+import { BrightspaceAPIService } from './shared/brightspace-api.service' 
+import { SessionService } from './shared/session.service' 
 
 @NgModule({
   declarations: [
@@ -22,7 +23,7 @@ import { BrightspaceAPIService } from './shared/brightspace.api.service'
     BrowserModule,
     HttpModule
   ],
-  providers: [BrightspaceAPIService],
+  providers: [BrightspaceAPIService, SessionService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

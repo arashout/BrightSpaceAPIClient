@@ -1,6 +1,6 @@
-import { Component, OnInit, EventEmitter, Output } from '@angular/core';
+import { Component, OnInit, EventEmitter, Output, OnChanges } from '@angular/core';
 
-import { BrightspaceAPIService } from '../shared/brightspace.api.service';
+import { BrightspaceAPIService } from '../shared/brightspace-api.service';
 import { ResultSet } from '../shared/result-set';
 
 @Component({
@@ -11,10 +11,8 @@ import { ResultSet } from '../shared/result-set';
 export class CommandBarComponent{
   @Output() onRetrievedResultSet = new EventEmitter<Object>();
 
-  value = '';
-  id = "command-bar";
-
-  constructor(private brightspaceService: BrightspaceAPIService) { }
+  private value: string = '';
+  constructor(private brightspaceService: BrightspaceAPIService) {}
 
   getAPIResults() {
     this.brightspaceService.getAPIResults()

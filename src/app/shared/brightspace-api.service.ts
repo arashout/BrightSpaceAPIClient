@@ -6,6 +6,5 @@ export class BrightspaceAPIService{
     constructor(private http: Http){}
     // Note: These return observables
     getAPIResults(){return this.http.get(document.URL + "api");}
-
-    getNewToken(){return this.http.get(document.URL + "refresh");}
+    getRefreshedSession(){return this.http.get(document.URL + "refresh");}
 }
