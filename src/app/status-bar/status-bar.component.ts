@@ -9,7 +9,7 @@ import { SessionService } from '../shared/session.service'
 })
 export class StatusBarComponent{
   isValidAccessToken: boolean;
-  constructor(private sessionService: SessionService) { 
-    this.isValidAccessToken = this.sessionService.isSessionExpired();
+  constructor(private sessionService: SessionService) {
+    this.isValidAccessToken = !this.sessionService.isSessionExpired();
   }
 }

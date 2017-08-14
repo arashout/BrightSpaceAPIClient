@@ -23,8 +23,7 @@ export class AppComponent implements OnInit {
       .subscribe(
       (response) => {
         let sessionResponse:SessionResponse = response.json();
-        console.log(new Date(sessionResponse.expiration));
-
+        this.sessionService.setSessionFromSessionResponse(sessionResponse);
       },
       (error) => console.log(error)
       );
