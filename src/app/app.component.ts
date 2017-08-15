@@ -19,13 +19,6 @@ export class AppComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.brightspaceService.getRefreshedSession()
-      .subscribe(
-      (response) => {
-        let sessionResponse:SessionResponse = response.json();
-        this.sessionService.setSessionFromSessionResponse(sessionResponse);
-      },
-      (error) => console.log(error)
-      );
+    this.brightspaceService.refreshSession();
   }
 }
