@@ -1,4 +1,4 @@
-import { Injectable} from '@angular/core';
+import { EventEmitter, Injectable} from '@angular/core';
 
 
 import { Session, SessionResponse } from './session'
@@ -6,11 +6,16 @@ import { Session, SessionResponse } from './session'
 @Injectable()
 export class SessionService{
     session: Session;
+    sessionUpdated=  new EventEmitter<boolean>();
+
     constructor() {
         this.session = new Session();
     }
     isSessionExpired() {
         return this.session.isExpired;
+    }
+    getSessionExpiration(): Date{
+        return this.session.expiration;
     }
 
     setSessionFromSessionResponse(sessionResponse: SessionResponse) {
@@ -22,11 +27,13 @@ export class SessionService{
 
         this.session.isExpired = timeDifference < 0;
         if (!this.session.isExpired) {
+            // Emit Event so StatusBar can update
+            this.sessionUpdated.emit();
+
             // Update the value of isExpired once the timer ends!
             setTimeout(() => {
                 this.session.isExpired = true;
-                console.log("Timer finisihed!");
-            }, timeDifference/1000);
+            }, timeDifference);
         }
 
     }
