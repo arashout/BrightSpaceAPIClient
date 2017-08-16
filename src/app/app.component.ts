@@ -14,9 +14,6 @@ import { SessionService } from './shared/session.service'
 export class AppComponent implements OnInit {
   title = 'app';
   constructor(private brightspaceService: BrightspaceAPIService, private sessionService: SessionService) { }
-  displayAPIResults(resultSet: ResultSet) {
-    console.log(resultSet.Items.length);
-  }
 
   ngOnInit() {
     this.brightspaceService.refreshSession();
