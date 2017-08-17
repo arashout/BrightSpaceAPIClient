@@ -21,11 +21,17 @@
       "styles": [
         "styles.css",
         "../node_modules/bulma/css/bulma.css",
-        "../node_modules/datatables.net-dt/css/jquery.dataTables.css"
+        "../node_modules/datatables.net-dt/css/jquery.dataTables.css",
+        "../node_modules/datatables.net-buttons-dt/css/buttons.dataTables.css"
       ],
       "scripts": [
         "../node_modules/jquery/dist/jquery.js",
-        "../node_modules/datatables.net/js/jquery.dataTables.js"
+        "../node_modules/datatables.net/js/jquery.dataTables.js",
+        "../node_modules/datatables.net-buttons/js/dataTables.buttons.js",
+        "../node_modules/datatables.net-buttons/js/buttons.colVis.js",
+        "../node_modules/datatables.net-buttons/js/buttons.flash.js",
+        "../node_modules/datatables.net-buttons/js/buttons.html5.js",
+        "../node_modules/datatables.net-buttons/js/buttons.print.js"
       ],
       "environmentSource": "environments/environment.ts",
       "environments": {

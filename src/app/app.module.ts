@@ -3,8 +3,6 @@ import { HttpModule } from '@angular/http';
 import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
-import { DataTablesModule } from 'angular-datatables';
-
 import { AppComponent } from './app.component';
 import { CommandBarComponent } from './command-bar/command-bar.component';
 import { StatusBarComponent } from './status-bar/status-bar.component';
@@ -28,7 +26,6 @@ import { DatatableContainerComponent } from './datatable-container/datatable-con
   imports: [
     BrowserModule,
     HttpModule,
-    DataTablesModule,
     FormsModule
   ],
   providers: [BrightspaceAPIService, SessionService],

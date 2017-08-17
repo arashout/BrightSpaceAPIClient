@@ -1,6 +1,5 @@
 import { Component, OnInit, Input, AfterContentInit } from '@angular/core';
 import { Http } from '@angular/http';
-import { DataTableDirective } from 'angular-datatables';
 import { Subject } from 'rxjs/Rx';
 
 import { ResultSet } from '../../shared/result-set';
@@ -22,9 +21,11 @@ export class DatatableComponent{
     this.rows = dataset;
     this.isRendered = true;
     setTimeout( ()=>{
-      $("#datatable").DataTable({
+      const table = $("#datatable").DataTable({
         autoWidth: true,
-        pageLength: dataset.length
+        pageLength: dataset.length,
+        dom: 'Bfrtip',
+        buttons: ["excel"]
       });
     }, this.RENDER_DELAY );
     
