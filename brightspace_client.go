@@ -143,11 +143,10 @@ func (bsc *BrightspaceClient) RefreshHandler(w http.ResponseWriter, r *http.Requ
 
 // APIHandler ...
 func (bsc *BrightspaceClient) APIHandler(w http.ResponseWriter, r *http.Request) {
-	// TODO: Read Request Payload instead of hardcoding commands!
-	baseRoute := "/d2l/api/lp/"
-	version := "1.13"
-	apiCommand := "/users/"
-	fullURL := bsc.credentials.HostURL + baseRoute + version + apiCommand
+	fullURL := bsc.credentials.HostURL + r.URL.Query().Get("basePath") + r.URL.Query().Get("command")
+	defer r.Body.Close()
+	body1, _ := ioutil.ReadAll(r.Body)
+	log.Print(string(body1))
 
 	req, err := http.NewRequest("GET", fullURL, nil)
 	req.Header.Set("Content-Type", "application/json")
@@ -166,6 +165,7 @@ func (bsc *BrightspaceClient) APIHandler(w http.ResponseWriter, r *http.Request)
 		return
 	}
 
+	log.Println(string(body))
 	w.Header().Set("Content-Type", "application/json")
 	w.Write(body)
 

@@ -1,5 +1,13 @@
 <div class="field">
+    <label class="label">Base Path</label>
+    <div class="control">
+      <input class="input" type="text" [(ngModel)]="basePathValue">
+    </div>
+  </div>
+<div class="field">
+  <label class="label">API Command</label>
   <div class="control">
-    <input class="input" type="text" (keyup.enter)="onEnter($event)" placeholder="API Commands">
+    <input class="input" type="text" (keyup.enter)="onEnter($event)" [(ngModel)]="apiCommandValue">
   </div>
 </div>
+

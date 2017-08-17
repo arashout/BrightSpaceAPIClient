@@ -1,5 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { Http } from '@angular/http';
+import { DataTableDirective } from 'angular-datatables';
 import { Subject } from 'rxjs/Rx';
 
 import { SessionService } from '../shared/session.service'
@@ -12,6 +13,9 @@ import { ResultSet } from '../shared/result-set'
   templateUrl: 'datatable.component.html'
 })
 export class DatatableComponent implements OnInit {
+  @ViewChild(DataTableDirective)
+  dtElement: DataTableDirective;
+
   dtOptions: DataTables.Settings = {
     pageLength: 100,
     autoWidth: true
@@ -22,18 +26,52 @@ export class DatatableComponent implements OnInit {
   constructor(private sessionService: SessionService, private brightspaceAPIService: BrightspaceAPIService) { }
   ngOnInit() {
     this.brightspaceAPIService.retrievedAPIResults.subscribe(
-      (rs: ResultSet) => {
-        this.populateTable(rs);
+      (results: Object) => {
+        if (this.dtElement.dtInstance !== undefined) {
+          this.dtElement.dtInstance.then((dtInstance: DataTables.Api) => {
+            // Destroy the table first
+            dtInstance.destroy();
+            // Populate table
+            this.populateTable(results);
+            // Don't render table until data present
+            this.dtTrigger.next();
+          }).catch((reason) => {
+            console.log(reason);
+          });
+        }
+        else {
+          // Populate table
+          this.populateTable(results);
+          // Don't render table until data present
+          this.dtTrigger.next();
+        }
 
-        // Don't render table until data present
-        this.dtTrigger.next();
       }
-    )
+    );
+
   }
-  populateTable(rs: ResultSet): void {
-    if (rs.Items.length != 0) {
-      this.dtOptions.columns = this.createColumns(rs);
-      this.dtOptions.data = this.createDataSet(rs);
+  rerender(): void {
+    this.dtElement.dtInstance.then((dtInstance: DataTables.Api) => {
+      // Destroy the table first
+      dtInstance.destroy();
+      // Call the dtTrigger to rerender again
+      this.dtTrigger.next();
+    });
+  }
+  
+  populateTable(o: Object): void {
+    if (o['Items'] !== undefined) {
+      let rs = <ResultSet>o;
+      if (rs.Items.length !== 0) {
+        this.dtOptions.columns = this.createColumns(rs);
+        this.dtOptions.data = this.createDataSet(rs);
+      }
+    }
+    // For the case of having only one result, object DOES NOT have .Items property
+    else {
+      let result = o;
+      this.dtOptions.columns = this.convertResultToColumns(result);
+      this.dtOptions.data = [this.convertResultToArray(result)]; // DataSet: Array<Array<any>>
     }
   }
 
@@ -42,14 +80,7 @@ export class DatatableComponent implements OnInit {
     let dataSet = [];
     let resultArray = rs.Items;
     resultArray.forEach((resultItem: Object) => {
-      let arr = Object.keys(resultItem).map(function (val) {
-        if (typeof resultItem[val] === 'object') {
-          return JSON.stringify((resultItem[val]));
-        }
-        else {
-          return resultItem[val];
-        }
-      });
+      let arr = this.convertResultToArray(resultItem);
       dataSet.push(arr);
     });
 
@@ -57,15 +88,27 @@ export class DatatableComponent implements OnInit {
   }
 
   createColumns(rs: ResultSet): DataTables.ColumnSettings[] {
-    if (rs.Items.length != 0) {
-      let columnSettings = [];
-      // Get the column names from first item in result set
-      Object.keys(rs.Items[0]).forEach(key => {
-        let o = {};
-        o["title"] = key;
-        columnSettings.push(o);
-      });
-      return columnSettings;
-    }
+    return this.convertResultToColumns(rs.Items[0]);
+  }
+
+  convertResultToColumns(resultItem: Object): DataTables.ColumnSettings[] {
+    let columnSettings = [];
+    Object.keys(resultItem).forEach(key => {
+      let o = {};
+      o["title"] = key;
+      columnSettings.push(o);
+    });
+    return columnSettings;
+  }
+
+  convertResultToArray(resultItem: Object): Array<any> {
+    return Object.keys(resultItem).map(function (val) {
+      if (typeof resultItem[val] === 'object') {
+        return JSON.stringify((resultItem[val]));
+      }
+      else {
+        return resultItem[val];
+      }
+    });
   }
 }

@@ -1,33 +1,39 @@
 import { Injectable, EventEmitter } from '@angular/core';
-import { Http } from '@angular/http';
+import { Http, RequestOptions, Headers, URLSearchParams } from '@angular/http';
 
 import { SessionService } from './session.service';
 
 import { SessionResponse } from './session';
-import { ResultSet } from './result-set'
 
 @Injectable()
 export class BrightspaceAPIService {
-    retrievedAPIResults = new EventEmitter<ResultSet>();
+    retrievedAPIResults = new EventEmitter<Object>();
 
     constructor(private http: Http, private sessionService: SessionService) { }
-    getAPIResultsObservable() {
+    getAPIResultsPromise(basePath: string, apiCommand: string) {
         // Guard against making a request with expired token
         if (!this.sessionService.isSessionExpired()) {
-            return this.http.get(document.URL + "api");
+            let headers = new Headers();
+            headers.append('Content-Type', 'application/json');
+            let params = new URLSearchParams();
+            params.set("command", apiCommand);
+            params.set("basePath", basePath);
+
+            let options = new RequestOptions({ headers: headers, params: params });
+
+            return this.http.get(document.URL + "api", { search: params }).toPromise();
         }
         else {
             console.log("You need to refresh your token!");
             this.refreshSession();
         }
     }
-    getAPIResults() {
-        this.getAPIResultsObservable().subscribe(
+    getAPIResults(basePath: string, apiCommand: string) {
+        this.getAPIResultsPromise(basePath, apiCommand).then(
             (response) => {
-                let rs: ResultSet = response.json();
-                this.retrievedAPIResults.emit(rs);
-            },
-            (error) => console.log(error)
+                let responseObject = response.json();
+                this.retrievedAPIResults.emit(responseObject);
+            }
         );
     }
     refreshSession() {

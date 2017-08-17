@@ -1,6 +1,7 @@
 import { BrowserModule } from '@angular/platform-browser';
 import {HttpModule } from '@angular/http';
 import { NgModule } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 
 import { DataTablesModule } from 'angular-datatables';
 
@@ -22,7 +23,8 @@ import { DatatableComponent } from './datatable/datatable.component'
   imports: [
     BrowserModule,
     HttpModule,
-    DataTablesModule
+    DataTablesModule,
+    FormsModule
   ],
   providers: [BrightspaceAPIService, SessionService],
   bootstrap: [AppComponent]

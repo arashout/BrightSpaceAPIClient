@@ -9,12 +9,13 @@ import { ResultSet } from '../shared/result-set';
   styleUrls: ['./command-bar.component.css']
 })
 export class CommandBarComponent{
-
-  private value: string = '';
+  // Initialize input values that are two-way data bound
+  basePathValue: string = '/d2l/api/lp/1.13/';
+  apiCommandValue = 'users/'
+  
   constructor(private brightspaceService: BrightspaceAPIService) {}
 
   onEnter(event: KeyboardEvent){
-    this.value = (<HTMLInputElement>event.target).value;
-    this.brightspaceService.getAPIResults();
+    this.brightspaceService.getAPIResults(this.basePathValue, this.apiCommandValue);
   }
 }
