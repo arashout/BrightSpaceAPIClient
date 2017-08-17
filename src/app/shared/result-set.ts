@@ -1,4 +1,4 @@
 export interface ResultSet {
-    PagingInfo: { HasMoreItems: boolean };
-    Items: Array<object>;
+    PagingInfo?: { HasMoreItems: boolean };
+    Items?: Array<object>;
 }

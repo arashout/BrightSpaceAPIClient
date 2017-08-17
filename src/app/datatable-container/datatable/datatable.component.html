@@ -1,0 +1,14 @@
+<div *ngIf="isRendered">
+    <table id="datatable" class="row-border hover">
+        <thead>
+            <tr>
+                <th *ngFor="let header of columnHeaders">{{header}}</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let row of rows">
+                <td *ngFor="let column of row">{{ column }}</td>
+            </tr>
+        </tbody>
+    </table>
+</div>

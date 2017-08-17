@@ -1,8 +1,10 @@
 import { Injectable, EventEmitter } from '@angular/core';
 import { Http, RequestOptions, Headers, URLSearchParams } from '@angular/http';
+import 'rxjs/add/operator/toPromise';
 
 import { SessionService } from './session.service';
 
+import { ResultSet } from './result-set';
 import { SessionResponse } from './session';
 
 @Injectable()
@@ -10,6 +12,7 @@ export class BrightspaceAPIService {
     retrievedAPIResults = new EventEmitter<Object>();
 
     constructor(private http: Http, private sessionService: SessionService) { }
+
     getAPIResultsPromise(basePath: string, apiCommand: string) {
         // Guard against making a request with expired token
         if (!this.sessionService.isSessionExpired()) {
@@ -28,11 +31,22 @@ export class BrightspaceAPIService {
             this.refreshSession();
         }
     }
+
     getAPIResults(basePath: string, apiCommand: string) {
         this.getAPIResultsPromise(basePath, apiCommand).then(
             (response) => {
-                let responseObject = response.json();
-                this.retrievedAPIResults.emit(responseObject);
+                const responseObject = response.json();
+                let rs: ResultSet;
+                if (responseObject['Items'] === undefined) {
+                    rs = {
+                        "Items":[responseObject],
+                        "PagingInfo":{"HasMoreItems": false}
+                    };
+                }
+                else {
+                    rs = responseObject;
+                }
+                this.retrievedAPIResults.emit(rs);
             }
         );
     }
