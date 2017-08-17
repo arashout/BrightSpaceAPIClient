@@ -14,15 +14,18 @@ export class DatatableComponent{
   private rows: Array<Array<any>>;
   private isRendered: boolean = false;
 
-  // Need to find a workaround for this...
-  private RENDER_DELAY = 500;
+  // Need a delay to initializing data table before the columns in the table are set
+  private RENDER_DELAY = 100;
 
   populateTable(columns: Array<string>, dataset: Array<Array<any>>){
     this.columnHeaders = columns;
     this.rows = dataset;
     this.isRendered = true;
     setTimeout( ()=>{
-      $("#datatable").DataTable();
+      $("#datatable").DataTable({
+        autoWidth: true,
+        pageLength: dataset.length
+      });
     }, this.RENDER_DELAY );
     
   }

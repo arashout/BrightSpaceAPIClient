@@ -37,6 +37,8 @@ export class BrightspaceAPIService {
             (response) => {
                 const responseObject = response.json();
                 let rs: ResultSet;
+                // If there is only one result, it doesn't have properties of ResultSet...
+                // So we add it for consistency
                 if (responseObject['Items'] === undefined) {
                     rs = {
                         "Items":[responseObject],
