@@ -3,6 +3,7 @@ import { Http, RequestOptions, Headers, URLSearchParams } from '@angular/http';
 import 'rxjs/add/operator/toPromise';
 
 import { SessionService } from './session.service';
+import { MessageService, Message } from './message.service';
 
 import { ResultSet } from './result-set';
 import { SessionResponse } from './session';
@@ -11,7 +12,11 @@ import { SessionResponse } from './session';
 export class BrightspaceAPIService {
     retrievedAPIResults = new EventEmitter<Object>();
 
-    constructor(private http: Http, private sessionService: SessionService) { }
+    constructor(
+        private http: Http,
+        private sessionService: SessionService,
+        private messageService: MessageService
+    ) { }
 
     getAPIResultsPromise(basePath: string, apiCommand: string) {
         // Guard against making a request with expired token
@@ -27,7 +32,13 @@ export class BrightspaceAPIService {
             return this.http.get(document.URL + "api", { search: params }).toPromise();
         }
         else {
-            console.log("You need to refresh your token!");
+            this.messageService.messageUpdated.emit(
+                new Message(
+                    "Token was expired!",
+                    "Wait until your token is refreshed.\nThen try again.",
+                    10
+                )
+            );
             this.refreshSession();
         }
     }
@@ -41,16 +52,47 @@ export class BrightspaceAPIService {
                 // So we add it for consistency
                 if (responseObject['Items'] === undefined) {
                     rs = {
-                        "Items":[responseObject],
-                        "PagingInfo":{"HasMoreItems": false}
+                        "Items": [responseObject],
+                        "PagingInfo": { "HasMoreItems": false }
                     };
                 }
                 else {
                     rs = responseObject;
                 }
+                this.messageService.messageUpdated.emit(
+                    new Message(
+                        "Results Info:",
+                        JSON.stringify(rs.PagingInfo),
+                        100
+                    )
+                );
                 this.retrievedAPIResults.emit(rs);
             }
-        );
+        ).catch(
+            (reason: Response) => {
+                let message = new Message(
+                    "Error: HTTP GET request failed due to:",
+                    "",
+                    100,
+                    reason.toString()
+                );
+                switch (reason.status) {
+                    case 400: {
+                        message.body = "Invalid search parameters";
+                        break;
+                    }
+                    case 403: {
+                        message.body = "Lack of permissions";
+                        break;
+                    }
+                    case 404: {
+                        message.body = "Resource not found";
+                        break;
+                    }
+                }
+                this.messageService.messageUpdated.emit(message);
+            }
+            );
     }
     refreshSession() {
         this.getRefreshedSessionObservable().subscribe(
@@ -59,7 +101,13 @@ export class BrightspaceAPIService {
                 this.sessionService.setSessionFromSessionResponse(sessionResponse);
             },
             (error) => {
-                console.log(error);
+                this.messageService.messageUpdated.emit(
+                    new Message(
+                        "Error: Trying to refresh session",
+                        error,
+                        10
+                    )
+                );
             }
         );
     }
