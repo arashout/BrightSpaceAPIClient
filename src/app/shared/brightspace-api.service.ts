@@ -3,7 +3,7 @@ import { Http, RequestOptions, Headers, URLSearchParams } from '@angular/http';
 import 'rxjs/add/operator/toPromise';
 
 import { SessionService } from './session.service';
-import { MessageService, Message } from './message.service';
+import { MessageService, Message, MessageEnum } from './message.service';
 
 import { ResultSet } from './result-set';
 import { SessionResponse } from './session';
@@ -36,7 +36,9 @@ export class BrightspaceAPIService {
                 new Message(
                     "Token was expired!",
                     "Wait until your token is refreshed.\nThen try again.",
-                    10
+                    10,
+                    "",
+                    MessageEnum.IS_WARNING
                 )
             );
             this.refreshSession();
@@ -74,7 +76,8 @@ export class BrightspaceAPIService {
                     "Error: HTTP GET request failed due to:",
                     "",
                     100,
-                    reason.toString()
+                    reason.toString(),
+                    MessageEnum.IS_DANGER
                 );
                 switch (reason.status) {
                     case 400: {
@@ -98,6 +101,15 @@ export class BrightspaceAPIService {
         this.getRefreshedSessionObservable().subscribe(
             (response) => {
                 let sessionResponse: SessionResponse = response.json();
+                this.messageService.messageUpdated.emit(
+                    new Message(
+                        "Session refreshed",
+                        "Automatically refreshed your session",
+                        10,
+                        "",
+                        MessageEnum.IS_SUCCESS
+                    )
+                );
                 this.sessionService.setSessionFromSessionResponse(sessionResponse);
             },
             (error) => {
@@ -105,7 +117,9 @@ export class BrightspaceAPIService {
                     new Message(
                         "Error: Trying to refresh session",
                         error,
-                        10
+                        100,
+                        "",
+                        MessageEnum.IS_DANGER
                     )
                 );
             }

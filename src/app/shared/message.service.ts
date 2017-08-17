@@ -12,17 +12,34 @@ export class Message {
   body: string;
   additionalInfo: string;
   displayTime: number;
+  modifier: string;
 
-  constructor(header: string = "", body: string = "", displayTime: number = 1, additionalInfo: string = "") {
+  constructor(
+    header: string = "",
+    body: string = "",
+    displayTime: number = 1,
+    additionalInfo: string = "",
+    modifier: string = MessageEnum.IS_INFO
+  ) {
     this.header = header;
     this.body = body;
     this.displayTime = displayTime;
     this.additionalInfo = additionalInfo;
+    this.modifier = modifier;
   }
 };
 
-export enum MessageClass {
-  none = 1,
-  info = 2,
-  warning = 3
-};
+// Hack to use string enums
+interface ClassModifiers{
+  IS_INFO: string;
+  IS_SUCCESS: string;
+  IS_DANGER: string;
+  IS_WARNING: string;
+}
+
+export const MessageEnum =<ClassModifiers> Object({
+  IS_INFO : "is-info",
+  IS_DANGER : "is-danger",
+  IS_SUCCESS : "is-success",
+  IS_WARNING : "is-warning",
+});

@@ -1,4 +1,4 @@
-import { Component, OnInit, Renderer } from '@angular/core';
+import { Component, OnInit} from '@angular/core';
 
 import { MessageService, Message } from '../shared/message.service';
 
@@ -7,14 +7,15 @@ import { MessageService, Message } from '../shared/message.service';
   templateUrl: './message-bar.component.html',
   styleUrls: ['./message-bar.component.css']
 })
+
 export class MessageBarComponent implements OnInit {
-  message: Message;
+  message: Message = new Message();
   isDisplayed: boolean = false;
   // This is a handle for clearing the setTimeout 
   // Which is necessary if a new message is to be displayed before another has been cleared
   timeoutHandle: any = null; 
 
-  constructor(private messageService: MessageService, private renderer: Renderer) { }
+  constructor(private messageService: MessageService) { }
 
   ngOnInit() {
     this.messageService.messageUpdated.subscribe(

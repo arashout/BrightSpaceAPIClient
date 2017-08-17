@@ -1,9 +1,9 @@
-<article *ngIf="isDisplayed" class="message">
+<article class="message {{message.modifier}}" *ngIf="isDisplayed">
   <div class="message-header">
     <p>{{message.header}}</p>
   </div>
   <div class="message-body">
     <p>{{message.body}}</p>
-    <p *ngIf="message.additionalInfo !== ''" >Additional Info: {{message.additionalInfo}}</p>
+    <p *ngIf="message.additionalInfo !== ''">Additional Info: {{message.additionalInfo}}</p>
   </div>
 </article>

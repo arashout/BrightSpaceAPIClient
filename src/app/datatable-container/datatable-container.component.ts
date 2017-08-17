@@ -19,7 +19,7 @@ import { DatatableComponent } from './datatable/datatable.component';
   styleUrls: ['./datatable-container.component.css']
 })
 export class DatatableContainerComponent implements AfterContentInit {
-  // Get a reference to local '#container' <- in HTML
+  // Get a reference to local '#datatableContainer' <- in HTML
   // Read it as a ViewContainerRef so that it has createComponentMethod
   @ViewChild('datatableContainer', { read: ViewContainerRef }) container: ViewContainerRef;
 
