@@ -27,38 +27,24 @@ export class DatatableComponent implements OnInit {
   ngOnInit() {
     this.brightspaceAPIService.retrievedAPIResults.subscribe(
       (results: Object) => {
-        if (this.dtElement.dtInstance !== undefined) {
-          this.dtElement.dtInstance.then((dtInstance: DataTables.Api) => {
-            // Destroy the table first
-            dtInstance.destroy();
-            // Populate table
-            this.populateTable(results);
-            // Don't render table until data present
-            this.dtTrigger.next();
-          }).catch((reason) => {
-            console.log(reason);
-          });
-        }
-        else {
+        if (this.dtElement.dtInstance === undefined) {
           // Populate table
           this.populateTable(results);
           // Don't render table until data present
           this.dtTrigger.next();
+        }
+        else {
+          this.dtElement.dtInstance.then((dtInstance: DataTables.Api) => {
+            dtInstance = dtInstance.destroy(true);
+            this.dtTrigger.next();
+          });
         }
 
       }
     );
 
   }
-  rerender(): void {
-    this.dtElement.dtInstance.then((dtInstance: DataTables.Api) => {
-      // Destroy the table first
-      dtInstance.destroy();
-      // Call the dtTrigger to rerender again
-      this.dtTrigger.next();
-    });
-  }
-  
+
   populateTable(o: Object): void {
     if (o['Items'] !== undefined) {
       let rs = <ResultSet>o;
