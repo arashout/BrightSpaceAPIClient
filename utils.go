@@ -47,7 +47,7 @@ func GenerateRandomState(n int) (string, error) {
 	return base64.StdEncoding.EncodeToString(data), nil
 }
 
-// StructToJsonFile ...
+// StructToJSONFile ...
 func StructToJSONFile(s interface{}, path string) {
 	sJSON, err := json.Marshal(s)
 	if err != nil {
