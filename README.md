@@ -5,12 +5,13 @@ This is a utility built with Angular, Golang and Datatables for accessing the Br
 - Converts JSON list data retrieved from an API into a great looking Datatable and allows exports to .xlsx format
 
 ## Setup
-Before you run the web server you do need to create a `.devenv.json` file that contains this information
+Before you run the web server you do need to create a `.devenv.json` file that contains this information but filled in...
 ```json
 {
     "clientID": "",
     "clientSecret": "",
-    "hostURL": ""
+    "hostURL": "",
+    "scope": ""
 }
 ```
 With the format above!
@@ -24,4 +25,8 @@ In conjuction you can also build the Angular files with `ng build`
 NOTE: You need Golang, Angular, NPM... installed to build it
 
 TODO:
-- Add extra textarea for adding query to api commands [ ]
+- Extra textarea for adding query to api commands [ ]
+- Authorize button, for going through 3 legged oauth [ ]
+- Autocomplete search with successful past searchs [ ]
+- Display data that doesn't conform to ResultSet type properly [ ]
+- Load all results -> HasMoreItems should trigger more requests [ ]

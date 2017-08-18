@@ -110,6 +110,15 @@ func (bsc *BrightspaceClient) AuthCallbackHandler(w http.ResponseWriter, r *http
 
 // RefreshHandler ...
 func (bsc *BrightspaceClient) RefreshHandler(w http.ResponseWriter, r *http.Request) {
+	// First check that we actually have a refresh token
+	if bsc.credentials.Token == nil {
+		http.Error(w, "Don't have OAuth token!", http.StatusUnauthorized)
+		return
+	} else if bsc.credentials.Token.RefreshToken == "" {
+		http.Error(w, "Don't have OAuth token!", http.StatusUnauthorized)
+		return
+	}
+
 	// Send a request asking for new access token and refresh token using refresh token
 	payload := url.Values{}
 	payload.Add("grant_type", "refresh_token")
@@ -124,6 +133,7 @@ func (bsc *BrightspaceClient) RefreshHandler(w http.ResponseWriter, r *http.Requ
 	if err != nil {
 		log.Fatal(err.Error())
 	}
+
 	if resp.StatusCode != http.StatusOK {
 		http.Error(w, string(body), resp.StatusCode)
 		return

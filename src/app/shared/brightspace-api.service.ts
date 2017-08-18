@@ -112,13 +112,14 @@ export class BrightspaceAPIService {
                 );
                 this.sessionService.setSessionFromSessionResponse(sessionResponse);
             },
-            (error) => {
+            (error: Response) => {
+                console.log(error);
                 this.messageService.messageUpdated.emit(
                     new Message(
                         "Error: Trying to refresh session",
-                        error,
+                        error["_body"], // Typescript is hiding this property from me...
                         100,
-                        "",
+                        error.toString(),
                         MessageEnum.IS_DANGER
                     )
                 );

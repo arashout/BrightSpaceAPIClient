@@ -554,7 +554,9 @@ var BrightspaceAPIService = (function () {
             _this.messageService.messageUpdated.emit(new __WEBPACK_IMPORTED_MODULE_4__message_service__["a" /* Message */]("Session refreshed", "Automatically refreshed your session", 10, "", __WEBPACK_IMPORTED_MODULE_4__message_service__["b" /* MessageEnum */].IS_SUCCESS));
             _this.sessionService.setSessionFromSessionResponse(sessionResponse);
         }, function (error) {
-            _this.messageService.messageUpdated.emit(new __WEBPACK_IMPORTED_MODULE_4__message_service__["a" /* Message */]("Error: Trying to refresh session", error, 100, "", __WEBPACK_IMPORTED_MODULE_4__message_service__["b" /* MessageEnum */].IS_DANGER));
+            console.log(error);
+            _this.messageService.messageUpdated.emit(new __WEBPACK_IMPORTED_MODULE_4__message_service__["a" /* Message */]("Error: Trying to refresh session", error["_body"], // Typescript is hiding this property from me...
+            100, error.toString(), __WEBPACK_IMPORTED_MODULE_4__message_service__["b" /* MessageEnum */].IS_DANGER));
         });
     };
     BrightspaceAPIService.prototype.getRefreshedSessionObservable = function () { return this.http.get(document.URL + "refresh"); };
