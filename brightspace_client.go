@@ -176,7 +176,7 @@ func (bsc *BrightspaceClient) APIHandler(w http.ResponseWriter, r *http.Request)
 		return
 	}
 	params := url.Values{}
-	// TODO: For item in map of apiRequest add params
+
 	for key, value := range apiRequest.QueryParameters {
 		params.Set(key, value)
 	}

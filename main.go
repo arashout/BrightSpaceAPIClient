@@ -42,12 +42,12 @@ func main() {
 	mux.Handle("/", http.FileServer(http.Dir("dist")))
 	mux.HandleFunc("/auth", bsc.AuthHandler)
 	mux.HandleFunc("/callback", bsc.AuthCallbackHandler)
-	mux.HandleFunc("/refresh", bsc.RefreshHandler)
-	mux.HandleFunc("/api", bsc.APIHandler)
+	mux.HandleFunc("/refresh", GetOnlyWrapper(bsc.RefreshHandler))
+	mux.HandleFunc("/api", PostOnlyWrapper(bsc.APIHandler))
 
 	srv := &http.Server{
 		Addr:         ":" + clientPort,
-		Handler:      mux,
+		Handler:      &Middleware{mux: mux},
 		ReadTimeout:  2 * time.Second,
 		WriteTimeout: 2 * time.Second,
 		IdleTimeout:  2 * time.Second,
