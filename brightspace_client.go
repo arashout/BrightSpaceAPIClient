@@ -27,6 +27,12 @@ type BrightspaceToken struct {
 	Expiration   time.Time `json:"expiration"`
 }
 
+// APIRequest ... What an API request from the Angular front-end will look like
+type APIRequest struct {
+	APIEndpoint     string      `json:"apiEndpoint"`
+	QueryParameters interface{} `json:"queryParameters"`
+}
+
 const (
 	authService   = "https://auth.brightspace.com"
 	authEndpoint  = authService + "/oauth2/auth"

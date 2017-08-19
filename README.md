@@ -30,3 +30,4 @@ TODO:
 - Autocomplete search with successful past searchs [ ]
 - Display data that doesn't conform to ResultSet type properly [ ]
 - Load all results -> HasMoreItems should trigger more requests [ ]
+- Add middle-ware to backend Go [ ]
