@@ -29,8 +29,8 @@ type BrightspaceToken struct {
 
 // APIRequest ... What an API request from the Angular front-end will look like
 type APIRequest struct {
-	APIEndpoint     string      `json:"apiEndpoint"`
-	QueryParameters interface{} `json:"queryParameters"`
+	APIEndpoint     string            `json:"apiEndpoint"`
+	QueryParameters map[string]string `json:"queryParameters"`
 }
 
 const (
@@ -159,12 +159,32 @@ func (bsc *BrightspaceClient) RefreshHandler(w http.ResponseWriter, r *http.Requ
 
 // APIHandler ...
 func (bsc *BrightspaceClient) APIHandler(w http.ResponseWriter, r *http.Request) {
-	fullURL := bsc.credentials.HostURL + r.URL.Query().Get("basePath") + r.URL.Query().Get("command")
+	var apiRequest APIRequest
 	defer r.Body.Close()
-	body1, _ := ioutil.ReadAll(r.Body)
-	log.Print(string(body1))
+	// bodyR, _ := ioutil.ReadAll(r.Body)
+	// log.Println(string(bodyR))
+	err := json.NewDecoder(r.Body).Decode(&apiRequest)
 
-	req, err := http.NewRequest("GET", fullURL, nil)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	requestURL, err := url.Parse(bsc.credentials.HostURL + apiRequest.APIEndpoint)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	params := url.Values{}
+	// TODO: For item in map of apiRequest add params
+	for key, value := range apiRequest.QueryParameters {
+		params.Set(key, value)
+	}
+	requestURL.RawQuery = params.Encode()
+
+	log.Printf("GET %s", requestURL.String())
+	req, err := http.NewRequest("GET", requestURL.String(), nil)
+
 	req.Header.Set("Content-Type", "application/json")
 	req.Header.Set("Authorization", bsc.credentials.Token.TokenType+" "+bsc.credentials.Token.AccessToken)
 
@@ -184,7 +204,6 @@ func (bsc *BrightspaceClient) APIHandler(w http.ResponseWriter, r *http.Request)
 	log.Println(string(body))
 	w.Header().Set("Content-Type", "application/json")
 	w.Write(body)
-
 }
 
 func (bsc *BrightspaceClient) sendAuthorizedRequestWithPayload(method string, url string, payload url.Values) *http.Response {

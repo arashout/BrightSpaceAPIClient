@@ -24,12 +24,19 @@ export class BrightspaceAPIService {
             let headers = new Headers();
             headers.append('Content-Type', 'application/json');
             let params = new URLSearchParams();
-            params.set("command", apiCommand);
-            params.set("basePath", basePath);
 
             let options = new RequestOptions({ headers: headers, params: params });
 
-            return this.http.get(document.URL + "api", { search: params }).toPromise();
+            return this.http.post(
+                document.URL + "api",
+                {
+                    apiEndpoint: basePath + apiCommand,
+                    queryParameters: {
+                        "Bookmark": "1"
+                    }
+                },
+                { search: params }
+            ).toPromise();
         }
         else {
             this.messageService.messageUpdated.emit(

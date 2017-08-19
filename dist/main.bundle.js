@@ -500,10 +500,13 @@ var BrightspaceAPIService = (function () {
             var headers = new __WEBPACK_IMPORTED_MODULE_1__angular_http__["a" /* Headers */]();
             headers.append('Content-Type', 'application/json');
             var params = new __WEBPACK_IMPORTED_MODULE_1__angular_http__["e" /* URLSearchParams */]();
-            params.set("command", apiCommand);
-            params.set("basePath", basePath);
             var options = new __WEBPACK_IMPORTED_MODULE_1__angular_http__["d" /* RequestOptions */]({ headers: headers, params: params });
-            return this.http.get(document.URL + "api", { search: params }).toPromise();
+            return this.http.post(document.URL + "api", {
+                apiEndpoint: basePath + apiCommand,
+                queryParameters: {
+                    "Bookmark": "1"
+                }
+            }, { search: params }).toPromise();
         }
         else {
             this.messageService.messageUpdated.emit(new __WEBPACK_IMPORTED_MODULE_4__message_service__["a" /* Message */]("Token was expired!", "Wait until your token is refreshed.\nThen try again.", 10, "", __WEBPACK_IMPORTED_MODULE_4__message_service__["b" /* MessageEnum */].IS_WARNING));
