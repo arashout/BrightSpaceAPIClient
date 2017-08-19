@@ -18,24 +18,19 @@ export class BrightspaceAPIService {
         private messageService: MessageService
     ) { }
 
-    getAPIResultsPromise(basePath: string, apiCommand: string) {
+    getAPIResultsPromise(basePath: string, apiCommand: string, queryParameters: Object) {
         // Guard against making a request with expired token
         if (!this.sessionService.isSessionExpired()) {
             let headers = new Headers();
             headers.append('Content-Type', 'application/json');
-            let params = new URLSearchParams();
-
-            let options = new RequestOptions({ headers: headers, params: params });
 
             return this.http.post(
                 document.URL + "api",
                 {
                     apiEndpoint: basePath + apiCommand,
-                    queryParameters: {
-                        "Bookmark": "1"
-                    }
+                    queryParameters: queryParameters
                 },
-                { search: params }
+                { headers: headers }
             ).toPromise();
         }
         else {
@@ -52,8 +47,8 @@ export class BrightspaceAPIService {
         }
     }
 
-    getAPIResults(basePath: string, apiCommand: string) {
-        this.getAPIResultsPromise(basePath, apiCommand).then(
+    getAPIResults(basePath: string, apiCommand: string, queryParameters: Object) {
+        this.getAPIResultsPromise(basePath, apiCommand, queryParameters).then(
             (response) => {
                 const responseObject = response.json();
                 let rs: ResultSet;

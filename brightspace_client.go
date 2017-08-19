@@ -161,8 +161,6 @@ func (bsc *BrightspaceClient) RefreshHandler(w http.ResponseWriter, r *http.Requ
 func (bsc *BrightspaceClient) APIHandler(w http.ResponseWriter, r *http.Request) {
 	var apiRequest APIRequest
 	defer r.Body.Close()
-	// bodyR, _ := ioutil.ReadAll(r.Body)
-	// log.Println(string(bodyR))
 	err := json.NewDecoder(r.Body).Decode(&apiRequest)
 
 	if err != nil {

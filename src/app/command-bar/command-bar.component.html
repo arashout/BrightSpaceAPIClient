@@ -1,13 +1,19 @@
 <div class="field">
     <label class="label">Base Path</label>
     <div class="control">
-      <input class="input" type="text" [(ngModel)]="basePathValue">
+      <input class="input" type="text" (keyup.enter)="onEnter($event)" [(ngModel)]="basePathValue">
     </div>
   </div>
 <div class="field">
   <label class="label">API Command</label>
   <div class="control">
     <input class="input" type="text" (keyup.enter)="onEnter($event)" [(ngModel)]="apiCommandValue">
+  </div>
+</div>
+<div class="field">
+  <label class="label">Query Parameters</label>
+  <div class="control">
+    <textarea class="textarea" type="text" (keyup.enter)="onEnter($event)" [(ngModel)]="queryParameterValue"></textarea>
   </div>
 </div>
 
