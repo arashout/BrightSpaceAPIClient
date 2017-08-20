@@ -25,7 +25,6 @@ In conjuction you can also build the Angular files with `ng build`
 NOTE: You need Golang, Angular, NPM... installed to build it
 
 TODO:
-- Extra textarea for adding query to api commands [ ]
 - Authorize button, for going through 3 legged oauth [ ]
 - Autocomplete search with successful past searchs [ ]
 - Display data that doesn't conform to ResultSet type properly [ ]

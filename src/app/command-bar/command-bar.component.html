@@ -7,7 +7,12 @@
 <div class="field">
   <label class="label">API Command</label>
   <div class="control">
-    <input class="input" type="text" (keyup.enter)="onEnter($event)" [(ngModel)]="apiCommandValue">
+      <ng2-completer 
+      inputClass="input" 
+      [(ngModel)]="apiCommandValue" 
+      [datasource]="dataService" 
+      [minSearchLength]="0" 
+      (keyup)="onPress($event)"></ng2-completer>
   </div>
 </div>
 <div class="field">
@@ -17,3 +22,9 @@
   </div>
 </div>
 
+<div class="field">
+  <label class="label">Previous Commands</label>
+  <div class="control">
+    
+  </div>
+</div>

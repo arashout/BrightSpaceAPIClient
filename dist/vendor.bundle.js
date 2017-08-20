@@ -83,6 +83,1794 @@ function toComment(sourceMap) {
 
 /***/ }),
 
+/***/ "../../../../ng2-completer/components/completer-cmp.js":
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return CompleterCmp; });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__("../../../core/@angular/core.es5.js");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__angular_forms__ = __webpack_require__("../../../forms/@angular/forms.es5.js");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__directives_ctr_completer__ = __webpack_require__("../../../../ng2-completer/directives/ctr-completer.js");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__services_completer_service__ = __webpack_require__("../../../../ng2-completer/services/completer-service.js");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__globals__ = __webpack_require__("../../../../ng2-completer/globals.js");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5_rxjs_add_operator_catch__ = __webpack_require__("../../../../rxjs/add/operator/catch.js");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5_rxjs_add_operator_catch___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_5_rxjs_add_operator_catch__);
+
+
+
+
+
+
+
+var noop = function () { };
+var COMPLETER_CONTROL_VALUE_ACCESSOR = {
+    provide: __WEBPACK_IMPORTED_MODULE_1__angular_forms__["c" /* NG_VALUE_ACCESSOR */],
+    useExisting: Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["_21" /* forwardRef */])(function () { return CompleterCmp; }),
+    multi: true
+};
+var CompleterCmp = (function () {
+    function CompleterCmp(completerService, cdr) {
+        this.completerService = completerService;
+        this.cdr = cdr;
+        this.inputName = "";
+        this.inputId = "";
+        this.pause = __WEBPACK_IMPORTED_MODULE_4__globals__["d" /* PAUSE */];
+        this.minSearchLength = __WEBPACK_IMPORTED_MODULE_4__globals__["c" /* MIN_SEARCH_LENGTH */];
+        this.maxChars = __WEBPACK_IMPORTED_MODULE_4__globals__["b" /* MAX_CHARS */];
+        this.overrideSuggested = false;
+        this.clearSelected = false;
+        this.clearUnselected = false;
+        this.fillHighlighted = true;
+        this.placeholder = "";
+        this.autoMatch = false;
+        this.disableInput = false;
+        this.autofocus = false;
+        this.openOnFocus = false;
+        this.openOnClick = false;
+        this.selectOnClick = false;
+        this.autoHighlight = false;
+        this.selected = new __WEBPACK_IMPORTED_MODULE_0__angular_core__["w" /* EventEmitter */]();
+        this.highlighted = new __WEBPACK_IMPORTED_MODULE_0__angular_core__["w" /* EventEmitter */]();
+        this.blurEvent = new __WEBPACK_IMPORTED_MODULE_0__angular_core__["w" /* EventEmitter */]();
+        this.click = new __WEBPACK_IMPORTED_MODULE_0__angular_core__["w" /* EventEmitter */]();
+        this.focusEvent = new __WEBPACK_IMPORTED_MODULE_0__angular_core__["w" /* EventEmitter */]();
+        this.opened = new __WEBPACK_IMPORTED_MODULE_0__angular_core__["w" /* EventEmitter */]();
+        this.keyup = new __WEBPACK_IMPORTED_MODULE_0__angular_core__["w" /* EventEmitter */]();
+        this.keydown = new __WEBPACK_IMPORTED_MODULE_0__angular_core__["w" /* EventEmitter */]();
+        this.searchStr = "";
+        this.control = new __WEBPACK_IMPORTED_MODULE_1__angular_forms__["a" /* FormControl */]("");
+        this.displaySearching = true;
+        this.displayNoResults = true;
+        this._textNoResults = __WEBPACK_IMPORTED_MODULE_4__globals__["e" /* TEXT_NO_RESULTS */];
+        this._textSearching = __WEBPACK_IMPORTED_MODULE_4__globals__["f" /* TEXT_SEARCHING */];
+        this._onTouchedCallback = noop;
+        this._onChangeCallback = noop;
+        this._focus = false;
+        this._open = false;
+    }
+    Object.defineProperty(CompleterCmp.prototype, "value", {
+        get: function () { return this.searchStr; },
+        set: function (v) {
+            if (v !== this.searchStr) {
+                this.searchStr = v;
+            }
+            // Propagate the change in any case
+            this._onChangeCallback(v);
+        },
+        enumerable: true,
+        configurable: true
+    });
+    ;
+    CompleterCmp.prototype.ngAfterViewInit = function () {
+        if (this.autofocus) {
+            this._focus = true;
+        }
+    };
+    CompleterCmp.prototype.ngAfterViewChecked = function () {
+        var _this = this;
+        if (this._focus) {
+            setTimeout(function () {
+                _this.ctrInput.nativeElement.focus();
+                _this._focus = false;
+            }, 0);
+        }
+    };
+    CompleterCmp.prototype.onTouched = function () {
+        this._onTouchedCallback();
+    };
+    CompleterCmp.prototype.writeValue = function (value) {
+        this.searchStr = value;
+    };
+    CompleterCmp.prototype.registerOnChange = function (fn) {
+        this._onChangeCallback = fn;
+    };
+    CompleterCmp.prototype.registerOnTouched = function (fn) {
+        this._onTouchedCallback = fn;
+    };
+    CompleterCmp.prototype.setDisabledState = function (isDisabled) {
+        this.disableInput = isDisabled;
+    };
+    Object.defineProperty(CompleterCmp.prototype, "datasource", {
+        set: function (source) {
+            if (source) {
+                if (source instanceof Array) {
+                    this.dataService = this.completerService.local(source);
+                }
+                else if (typeof (source) === "string") {
+                    this.dataService = this.completerService.remote(source);
+                }
+                else {
+                    this.dataService = source;
+                }
+            }
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(CompleterCmp.prototype, "textNoResults", {
+        set: function (text) {
+            if (this._textNoResults != text) {
+                this._textNoResults = text;
+                this.displayNoResults = !!this._textNoResults && this._textNoResults !== "false";
+            }
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(CompleterCmp.prototype, "textSearching", {
+        set: function (text) {
+            if (this._textSearching != text) {
+                this._textSearching = text;
+                this.displaySearching = !!this._textSearching && this._textSearching !== "false";
+            }
+        },
+        enumerable: true,
+        configurable: true
+    });
+    CompleterCmp.prototype.ngOnInit = function () {
+        var _this = this;
+        this.completer.selected.subscribe(function (item) {
+            _this.selected.emit(item);
+        });
+        this.completer.highlighted.subscribe(function (item) {
+            _this.highlighted.emit(item);
+        });
+        this.completer.opened.subscribe(function (isOpen) {
+            _this._open = isOpen;
+            _this.opened.emit(isOpen);
+        });
+    };
+    CompleterCmp.prototype.onBlur = function () {
+        this.blurEvent.emit();
+        this.onTouched();
+        this.cdr.detectChanges();
+    };
+    CompleterCmp.prototype.onFocus = function () {
+        this.focusEvent.emit();
+        this.onTouched();
+    };
+    CompleterCmp.prototype.onClick = function (event) {
+        this.click.emit(event);
+        this.onTouched();
+    };
+    CompleterCmp.prototype.onKeyup = function (event) {
+        this.keyup.emit(event);
+        event.stopPropagation();
+    };
+    CompleterCmp.prototype.onKeydown = function (event) {
+        this.keydown.emit(event);
+        event.stopPropagation();
+    };
+    CompleterCmp.prototype.onChange = function (value) {
+        this.value = value;
+    };
+    CompleterCmp.prototype.open = function () {
+        this.completer.open();
+    };
+    CompleterCmp.prototype.close = function () {
+        this.completer.clear();
+    };
+    CompleterCmp.prototype.focus = function () {
+        if (this.ctrInput) {
+            this.ctrInput.nativeElement.focus();
+        }
+        else {
+            this._focus = true;
+        }
+    };
+    CompleterCmp.prototype.blur = function () {
+        if (this.ctrInput) {
+            this.ctrInput.nativeElement.blur();
+        }
+        else {
+            this._focus = false;
+        }
+    };
+    CompleterCmp.prototype.isOpen = function () {
+        return this._open;
+    };
+    CompleterCmp.decorators = [
+        { type: __WEBPACK_IMPORTED_MODULE_0__angular_core__["n" /* Component */], args: [{
+                    selector: "ng2-completer",
+                    template: "\n        <div class=\"completer-holder\" ctrCompleter>\n            <input #ctrInput [attr.id]=\"inputId.length > 0 ? inputId : null\" type=\"search\" class=\"completer-input\" ctrInput [ngClass]=\"inputClass\"\n                [(ngModel)]=\"searchStr\" (ngModelChange)=\"onChange($event)\" [attr.name]=\"inputName\" [placeholder]=\"placeholder\"\n                [attr.maxlength]=\"maxChars\" [tabindex]=\"fieldTabindex\" [disabled]=\"disableInput\"\n                [clearSelected]=\"clearSelected\" [clearUnselected]=\"clearUnselected\"\n                [overrideSuggested]=\"overrideSuggested\" [openOnFocus]=\"openOnFocus\" [fillHighlighted]=\"fillHighlighted\" \n                [openOnClick]=\"openOnClick\" [selectOnClick]=\"selectOnClick\"\n                (blur)=\"onBlur()\" (focus)=\"onFocus()\" (keyup)=\"onKeyup($event)\" (keydown)=\"onKeydown($event)\" (click)=\"onClick($event)\"\n                autocomplete=\"off\" autocorrect=\"off\" autocapitalize=\"off\" />\n\n            <div class=\"completer-dropdown-holder\"\n                *ctrList=\"dataService;\n                    minSearchLength: minSearchLength;\n                    pause: pause;\n                    autoMatch: autoMatch;\n                    initialValue: initialValue;\n                    autoHighlight: autoHighlight;\n                    displaySearching: displaySearching;\n                    let items = results;\n                    let searchActive = searching;\n                    let isInitialized = searchInitialized;\n                    let isOpen = isOpen;\">\n                <div class=\"completer-dropdown\" ctrDropdown *ngIf=\"isInitialized && isOpen && (( items?.length > 0|| (displayNoResults && !searchActive)) || (searchActive && displaySearching))\">\n                    <div *ngIf=\"searchActive && displaySearching\" class=\"completer-searching\">{{_textSearching}}</div>\n                    <div *ngIf=\"!searchActive && (!items || items?.length === 0)\" class=\"completer-no-results\">{{_textNoResults}}</div>\n                    <div class=\"completer-row-wrapper\" *ngFor=\"let item of items; let rowIndex=index\">\n                        <div class=\"completer-row\" [ctrRow]=\"rowIndex\" [dataItem]=\"item\">\n                            <div *ngIf=\"item.image || item.image === ''\" class=\"completer-image-holder\">\n                                <img *ngIf=\"item.image != ''\" src=\"{{item.image}}\" class=\"completer-image\" />\n                                <div *ngIf=\"item.image === ''\" class=\"completer-image-default\"></div>\n                            </div>\n                            <div class=\"completer-item-text\" [ngClass]=\"{'completer-item-text-image': item.image || item.image === '' }\">\n                                <completer-list-item class=\"completer-title\" [text]=\"item.title\" [matchClass]=\"matchClass\" [searchStr]=\"searchStr\" [type]=\"'title'\"></completer-list-item>\n                                <completer-list-item *ngIf=\"item.description && item.description != ''\" class=\"completer-description\" [text]=\"item.description\"\n                                    [matchClass]=\"matchClass\" [searchStr]=\"searchStr\" [type]=\"'description'\">\n                                </completer-list-item>\n                            </div>\n                        </div>\n                    </div>\n                </div>\n            </div>\n        </div>\n    ",
+                    styles: ["\n    .completer-dropdown {\n        border-color: #ececec;\n        border-width: 1px;\n        border-style: solid;\n        border-radius: 2px;\n        width: 250px;\n        padding: 6px;\n        cursor: pointer;\n        z-index: 9999;\n        position: absolute;\n        margin-top: -6px;\n        background-color: #ffffff;\n    }\n\n    .completer-row {\n        padding: 5px;\n        color: #000000;\n        margin-bottom: 4px;\n        clear: both;\n        display: inline-block;\n        width: 103%;\n    }\n\n    .completer-selected-row {\n        background-color: lightblue;\n        color: #ffffff;\n    }\n\n    .completer-description {\n        font-size: 14px;\n    }\n\n    .completer-image-default {\n        width: 16px;\n        height: 16px;\n        background-image: url(\"demo/res/img/default.png\");\n    }\n\n    .completer-image-holder {\n        float: left;\n        width: 10%;\n    }\n    .completer-item-text-image {\n        float: right;\n        width: 90%;\n    }\n    "],
+                    providers: [COMPLETER_CONTROL_VALUE_ACCESSOR]
+                },] },
+    ];
+    /** @nocollapse */
+    CompleterCmp.ctorParameters = function () { return [
+        { type: __WEBPACK_IMPORTED_MODULE_3__services_completer_service__["a" /* CompleterService */], },
+        { type: __WEBPACK_IMPORTED_MODULE_0__angular_core__["k" /* ChangeDetectorRef */], },
+    ]; };
+    CompleterCmp.propDecorators = {
+        'dataService': [{ type: __WEBPACK_IMPORTED_MODULE_0__angular_core__["E" /* Input */] },],
+        'inputName': [{ type: __WEBPACK_IMPORTED_MODULE_0__angular_core__["E" /* Input */] },],
+        'inputId': [{ type: __WEBPACK_IMPORTED_MODULE_0__angular_core__["E" /* Input */] },],
+        'pause': [{ type: __WEBPACK_IMPORTED_MODULE_0__angular_core__["E" /* Input */] },],
+        'minSearchLength': [{ type: __WEBPACK_IMPORTED_MODULE_0__angular_core__["E" /* Input */] },],
+        'maxChars': [{ type: __WEBPACK_IMPORTED_MODULE_0__angular_core__["E" /* Input */] },],
+        'overrideSuggested': [{ type: __WEBPACK_IMPORTED_MODULE_0__angular_core__["E" /* Input */] },],
+        'clearSelected': [{ type: __WEBPACK_IMPORTED_MODULE_0__angular_core__["E" /* Input */] },],
+        'clearUnselected': [{ type: __WEBPACK_IMPORTED_MODULE_0__angular_core__["E" /* Input */] },],
+        'fillHighlighted': [{ type: __WEBPACK_IMPORTED_MODULE_0__angular_core__["E" /* Input */] },],
+        'placeholder': [{ type: __WEBPACK_IMPORTED_MODULE_0__angular_core__["E" /* Input */] },],
+        'matchClass': [{ type: __WEBPACK_IMPORTED_MODULE_0__angular_core__["E" /* Input */] },],
+        'fieldTabindex': [{ type: __WEBPACK_IMPORTED_MODULE_0__angular_core__["E" /* Input */] },],
+        'autoMatch': [{ type: __WEBPACK_IMPORTED_MODULE_0__angular_core__["E" /* Input */] },],
+        'disableInput': [{ type: __WEBPACK_IMPORTED_MODULE_0__angular_core__["E" /* Input */] },],
+        'inputClass': [{ type: __WEBPACK_IMPORTED_MODULE_0__angular_core__["E" /* Input */] },],
+        'autofocus': [{ type: __WEBPACK_IMPORTED_MODULE_0__angular_core__["E" /* Input */] },],
+        'openOnFocus': [{ type: __WEBPACK_IMPORTED_MODULE_0__angular_core__["E" /* Input */] },],
+        'openOnClick': [{ type: __WEBPACK_IMPORTED_MODULE_0__angular_core__["E" /* Input */] },],
+        'selectOnClick': [{ type: __WEBPACK_IMPORTED_MODULE_0__angular_core__["E" /* Input */] },],
+        'initialValue': [{ type: __WEBPACK_IMPORTED_MODULE_0__angular_core__["E" /* Input */] },],
+        'autoHighlight': [{ type: __WEBPACK_IMPORTED_MODULE_0__angular_core__["E" /* Input */] },],
+        'selected': [{ type: __WEBPACK_IMPORTED_MODULE_0__angular_core__["R" /* Output */] },],
+        'highlighted': [{ type: __WEBPACK_IMPORTED_MODULE_0__angular_core__["R" /* Output */] },],
+        'blurEvent': [{ type: __WEBPACK_IMPORTED_MODULE_0__angular_core__["R" /* Output */], args: ["blur",] },],
+        'click': [{ type: __WEBPACK_IMPORTED_MODULE_0__angular_core__["R" /* Output */] },],
+        'focusEvent': [{ type: __WEBPACK_IMPORTED_MODULE_0__angular_core__["R" /* Output */], args: ["focus",] },],
+        'opened': [{ type: __WEBPACK_IMPORTED_MODULE_0__angular_core__["R" /* Output */] },],
+        'keyup': [{ type: __WEBPACK_IMPORTED_MODULE_0__angular_core__["R" /* Output */] },],
+        'keydown': [{ type: __WEBPACK_IMPORTED_MODULE_0__angular_core__["R" /* Output */] },],
+        'completer': [{ type: __WEBPACK_IMPORTED_MODULE_0__angular_core__["_13" /* ViewChild */], args: [__WEBPACK_IMPORTED_MODULE_2__directives_ctr_completer__["a" /* CtrCompleter */],] },],
+        'ctrInput': [{ type: __WEBPACK_IMPORTED_MODULE_0__angular_core__["_13" /* ViewChild */], args: ["ctrInput",] },],
+        'datasource': [{ type: __WEBPACK_IMPORTED_MODULE_0__angular_core__["E" /* Input */] },],
+        'textNoResults': [{ type: __WEBPACK_IMPORTED_MODULE_0__angular_core__["E" /* Input */] },],
+        'textSearching': [{ type: __WEBPACK_IMPORTED_MODULE_0__angular_core__["E" /* Input */] },],
+    };
+    return CompleterCmp;
+}());
+
+//# sourceMappingURL=completer-cmp.js.map
+
+/***/ }),
+
+/***/ "../../../../ng2-completer/components/completer-list-item-cmp.js":
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return CompleterListItemCmp; });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__("../../../core/@angular/core.es5.js");
+
+
+var CompleterListItemCmp = (function () {
+    function CompleterListItemCmp() {
+        this.parts = [];
+    }
+    CompleterListItemCmp.prototype.ngOnInit = function () {
+        if (!this.searchStr) {
+            this.parts.push({ isMatch: false, text: this.text });
+            return;
+        }
+        var matchStr = this.text.toLowerCase();
+        var matchPos = matchStr.indexOf(this.searchStr.toLowerCase());
+        var startIndex = 0;
+        while (matchPos >= 0) {
+            var matchText = this.text.slice(matchPos, matchPos + this.searchStr.length);
+            if (matchPos === 0) {
+                this.parts.push({ isMatch: true, text: matchText });
+                startIndex += this.searchStr.length;
+            }
+            else if (matchPos > 0) {
+                var matchPart = this.text.slice(startIndex, matchPos);
+                this.parts.push({ isMatch: false, text: matchPart });
+                this.parts.push({ isMatch: true, text: matchText });
+                startIndex += this.searchStr.length + matchPart.length;
+            }
+            matchPos = matchStr.indexOf(this.searchStr.toLowerCase(), startIndex);
+        }
+        if (startIndex < this.text.length) {
+            this.parts.push({ isMatch: false, text: this.text.slice(startIndex, this.text.length) });
+        }
+    };
+    CompleterListItemCmp.decorators = [
+        { type: __WEBPACK_IMPORTED_MODULE_0__angular_core__["n" /* Component */], args: [{
+                    selector: "completer-list-item",
+                    template: "<span class=\"completer-list-item-holder\" [ngClass]=\"{'completer-title': type === 'title', 'completer-description': type === 'description'}\" >\n        <span class=\"completer-list-item\" *ngFor=\"let part of parts\" [ngClass]=\"part.isMatch ? matchClass : null\">{{part.text}}</span>\n    </span>"
+                },] },
+    ];
+    /** @nocollapse */
+    CompleterListItemCmp.ctorParameters = function () { return []; };
+    CompleterListItemCmp.propDecorators = {
+        'text': [{ type: __WEBPACK_IMPORTED_MODULE_0__angular_core__["E" /* Input */] },],
+        'searchStr': [{ type: __WEBPACK_IMPORTED_MODULE_0__angular_core__["E" /* Input */] },],
+        'matchClass': [{ type: __WEBPACK_IMPORTED_MODULE_0__angular_core__["E" /* Input */] },],
+        'type': [{ type: __WEBPACK_IMPORTED_MODULE_0__angular_core__["E" /* Input */] },],
+    };
+    return CompleterListItemCmp;
+}());
+
+//# sourceMappingURL=completer-list-item-cmp.js.map
+
+/***/ }),
+
+/***/ "../../../../ng2-completer/directives/ctr-completer.js":
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return CtrCompleter; });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__("../../../core/@angular/core.es5.js");
+
+var CtrCompleter = (function () {
+    function CtrCompleter() {
+        this.selected = new __WEBPACK_IMPORTED_MODULE_0__angular_core__["w" /* EventEmitter */]();
+        this.highlighted = new __WEBPACK_IMPORTED_MODULE_0__angular_core__["w" /* EventEmitter */]();
+        this.opened = new __WEBPACK_IMPORTED_MODULE_0__angular_core__["w" /* EventEmitter */]();
+        this.dataSourceChange = new __WEBPACK_IMPORTED_MODULE_0__angular_core__["w" /* EventEmitter */]();
+        this._hasHighlighted = false;
+        this._hasSelected = false;
+        this._cancelBlur = false;
+        this._isOpen = false;
+    }
+    CtrCompleter.prototype.registerList = function (list) {
+        this.list = list;
+    };
+    CtrCompleter.prototype.registerDropdown = function (dropdown) {
+        this.dropdown = dropdown;
+    };
+    CtrCompleter.prototype.onHighlighted = function (item) {
+        this.highlighted.emit(item);
+        this._hasHighlighted = !!item;
+    };
+    CtrCompleter.prototype.onSelected = function (item, clearList) {
+        if (clearList === void 0) { clearList = true; }
+        this.selected.emit(item);
+        if (item) {
+            this._hasSelected = true;
+        }
+        if (clearList) {
+            this.clear();
+        }
+    };
+    CtrCompleter.prototype.onDataSourceChange = function () {
+        if (this.hasSelected) {
+            this.selected.emit(null);
+            this._hasSelected = false;
+        }
+        this.dataSourceChange.emit();
+    };
+    CtrCompleter.prototype.search = function (term) {
+        if (this._hasSelected) {
+            this.selected.emit(null);
+            this._hasSelected = false;
+        }
+        if (this.list) {
+            this.list.search(term);
+        }
+    };
+    CtrCompleter.prototype.clear = function () {
+        this._hasHighlighted = false;
+        this.isOpen = false;
+        if (this.dropdown) {
+            this.dropdown.clear();
+        }
+        if (this.list) {
+            this.list.clear();
+        }
+    };
+    CtrCompleter.prototype.selectCurrent = function () {
+        if (this.dropdown) {
+            this.dropdown.selectCurrent();
+        }
+    };
+    CtrCompleter.prototype.nextRow = function () {
+        if (this.dropdown) {
+            this.dropdown.nextRow();
+        }
+    };
+    CtrCompleter.prototype.prevRow = function () {
+        if (this.dropdown) {
+            this.dropdown.prevRow();
+        }
+    };
+    CtrCompleter.prototype.hasHighlighted = function () {
+        return this._hasHighlighted;
+    };
+    CtrCompleter.prototype.cancelBlur = function (cancel) {
+        this._cancelBlur = cancel;
+    };
+    CtrCompleter.prototype.isCancelBlur = function () {
+        return this._cancelBlur;
+    };
+    CtrCompleter.prototype.open = function () {
+        if (!this._isOpen) {
+            this.isOpen = true;
+            this.list.open();
+        }
+    };
+    Object.defineProperty(CtrCompleter.prototype, "isOpen", {
+        get: function () {
+            return this._isOpen;
+        },
+        set: function (open) {
+            this._isOpen = open;
+            this.opened.emit(this._isOpen);
+            if (this.list) {
+                this.list.isOpen(open);
+            }
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(CtrCompleter.prototype, "autoHighlightIndex", {
+        get: function () {
+            return this._autoHighlightIndex;
+        },
+        set: function (index) {
+            this._autoHighlightIndex = index;
+            if (this.dropdown) {
+                this.dropdown.highlightRow(this._autoHighlightIndex);
+            }
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(CtrCompleter.prototype, "hasSelected", {
+        get: function () {
+            return this._hasSelected;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    CtrCompleter.decorators = [
+        { type: __WEBPACK_IMPORTED_MODULE_0__angular_core__["t" /* Directive */], args: [{
+                    selector: "[ctrCompleter]",
+                },] },
+    ];
+    /** @nocollapse */
+    CtrCompleter.ctorParameters = function () { return []; };
+    CtrCompleter.propDecorators = {
+        'selected': [{ type: __WEBPACK_IMPORTED_MODULE_0__angular_core__["R" /* Output */] },],
+        'highlighted': [{ type: __WEBPACK_IMPORTED_MODULE_0__angular_core__["R" /* Output */] },],
+        'opened': [{ type: __WEBPACK_IMPORTED_MODULE_0__angular_core__["R" /* Output */] },],
+        'dataSourceChange': [{ type: __WEBPACK_IMPORTED_MODULE_0__angular_core__["R" /* Output */] },],
+    };
+    return CtrCompleter;
+}());
+
+//# sourceMappingURL=ctr-completer.js.map
+
+/***/ }),
+
+/***/ "../../../../ng2-completer/directives/ctr-dropdown.js":
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "b", function() { return CtrRowItem; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return CtrDropdown; });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__("../../../core/@angular/core.es5.js");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__ctr_completer__ = __webpack_require__("../../../../ng2-completer/directives/ctr-completer.js");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__globals__ = __webpack_require__("../../../../ng2-completer/globals.js");
+
+
+
+var CtrRowItem = (function () {
+    function CtrRowItem(row, index) {
+        this.row = row;
+        this.index = index;
+    }
+    return CtrRowItem;
+}());
+
+var CtrDropdown = (function () {
+    function CtrDropdown(completer, el) {
+        this.completer = completer;
+        this.el = el;
+        this.rows = [];
+        this._rowMouseDown = false;
+        this.completer.registerDropdown(this);
+    }
+    CtrDropdown.prototype.ngOnDestroy = function () {
+        this.completer.registerDropdown(null);
+    };
+    CtrDropdown.prototype.ngAfterViewInit = function () {
+        var _this = this;
+        var css = getComputedStyle(this.el.nativeElement);
+        var autoHighlightIndex = this.completer.autoHighlightIndex;
+        this.isScrollOn = !!css.maxHeight && css.overflowY === "auto";
+        if (autoHighlightIndex) {
+            setTimeout(function () {
+                _this.highlightRow(autoHighlightIndex);
+            }, 0);
+        }
+    };
+    CtrDropdown.prototype.onMouseDown = function (event) {
+        var _this = this;
+        // Support for canceling blur on IE (issue #158)
+        if (!this._rowMouseDown) {
+            this.completer.cancelBlur(true);
+            setTimeout(function () {
+                _this.completer.cancelBlur(false);
+            }, 0);
+        }
+        else {
+            this._rowMouseDown = false;
+        }
+    };
+    CtrDropdown.prototype.registerRow = function (row) {
+        var arrIndex = this.rows.findIndex(function (_row) { return _row.index === row.index; });
+        if (arrIndex >= 0) {
+            this.rows[arrIndex] = row;
+        }
+        else {
+            this.rows.push(row);
+        }
+    };
+    CtrDropdown.prototype.unregisterRow = function (rowIndex) {
+        var arrIndex = this.rows.findIndex(function (_row) { return _row.index === rowIndex; });
+        this.rows.splice(arrIndex, 1);
+        if (this.currHighlighted && rowIndex === this.currHighlighted.index) {
+            this.highlightRow(null);
+        }
+    };
+    CtrDropdown.prototype.highlightRow = function (index) {
+        var highlighted = this.rows.find(function (row) { return row.index === index; });
+        if (Object(__WEBPACK_IMPORTED_MODULE_2__globals__["g" /* isNil */])(index) || index < 0) {
+            if (this.currHighlighted) {
+                this.currHighlighted.row.setHighlighted(false);
+            }
+            this.currHighlighted = undefined;
+            this.completer.onHighlighted(null);
+            return;
+        }
+        if (!highlighted) {
+            return;
+        }
+        if (this.currHighlighted) {
+            this.currHighlighted.row.setHighlighted(false);
+        }
+        this.currHighlighted = highlighted;
+        this.currHighlighted.row.setHighlighted(true);
+        this.completer.onHighlighted(this.currHighlighted.row.getDataItem());
+        if (this.isScrollOn && this.currHighlighted) {
+            var rowTop = this.dropdownRowTop();
+            if (!rowTop) {
+                return;
+            }
+            if (rowTop < 0) {
+                this.dropdownScrollTopTo(rowTop - 1);
+            }
+            else {
+                var row = this.currHighlighted.row.getNativeElement();
+                if (this.dropdownHeight() < row.getBoundingClientRect().bottom) {
+                    this.dropdownScrollTopTo(this.dropdownRowOffsetHeight(row));
+                    if (this.el.nativeElement.getBoundingClientRect().bottom - this.dropdownRowOffsetHeight(row) < row.getBoundingClientRect().top) {
+                        this.dropdownScrollTopTo(row.getBoundingClientRect().top - (this.el.nativeElement.getBoundingClientRect().top + parseInt(getComputedStyle(this.el.nativeElement).paddingTop, 10)));
+                    }
+                }
+            }
+        }
+    };
+    CtrDropdown.prototype.clear = function () {
+        this.rows = [];
+    };
+    CtrDropdown.prototype.onSelected = function (item) {
+        this.completer.onSelected(item);
+    };
+    CtrDropdown.prototype.rowMouseDown = function () {
+        this._rowMouseDown = true;
+    };
+    CtrDropdown.prototype.selectCurrent = function () {
+        if (this.currHighlighted) {
+            this.onSelected(this.currHighlighted.row.getDataItem());
+        }
+        else if (this.rows.length > 0) {
+            this.onSelected(this.rows[0].row.getDataItem());
+        }
+    };
+    CtrDropdown.prototype.nextRow = function () {
+        var nextRowIndex = 0;
+        if (this.currHighlighted) {
+            nextRowIndex = this.currHighlighted.index + 1;
+        }
+        this.highlightRow(nextRowIndex);
+    };
+    CtrDropdown.prototype.prevRow = function () {
+        var nextRowIndex = -1;
+        if (this.currHighlighted) {
+            nextRowIndex = this.currHighlighted.index - 1;
+        }
+        this.highlightRow(nextRowIndex);
+    };
+    CtrDropdown.prototype.dropdownScrollTopTo = function (offset) {
+        this.el.nativeElement.scrollTop = this.el.nativeElement.scrollTop + offset;
+    };
+    CtrDropdown.prototype.dropdownRowTop = function () {
+        if (!this.currHighlighted) {
+            return;
+        }
+        return this.currHighlighted.row.getNativeElement().getBoundingClientRect().top -
+            (this.el.nativeElement.getBoundingClientRect().top +
+                parseInt(getComputedStyle(this.el.nativeElement).paddingTop, 10));
+    };
+    CtrDropdown.prototype.dropdownHeight = function () {
+        return this.el.nativeElement.getBoundingClientRect().top +
+            parseInt(getComputedStyle(this.el.nativeElement).maxHeight, 10);
+    };
+    CtrDropdown.prototype.dropdownRowOffsetHeight = function (row) {
+        var css = getComputedStyle(row.parentElement);
+        return row.parentElement.offsetHeight +
+            parseInt(css.marginTop, 10) + parseInt(css.marginBottom, 10);
+    };
+    CtrDropdown.decorators = [
+        { type: __WEBPACK_IMPORTED_MODULE_0__angular_core__["t" /* Directive */], args: [{
+                    selector: "[ctrDropdown]",
+                },] },
+    ];
+    /** @nocollapse */
+    CtrDropdown.ctorParameters = function () { return [
+        { type: __WEBPACK_IMPORTED_MODULE_1__ctr_completer__["a" /* CtrCompleter */], decorators: [{ type: __WEBPACK_IMPORTED_MODULE_0__angular_core__["x" /* Host */] },] },
+        { type: __WEBPACK_IMPORTED_MODULE_0__angular_core__["u" /* ElementRef */], },
+    ]; };
+    CtrDropdown.propDecorators = {
+        'onMouseDown': [{ type: __WEBPACK_IMPORTED_MODULE_0__angular_core__["z" /* HostListener */], args: ["mousedown", ["$event"],] },],
+    };
+    return CtrDropdown;
+}());
+
+//# sourceMappingURL=ctr-dropdown.js.map
+
+/***/ }),
+
+/***/ "../../../../ng2-completer/directives/ctr-input.js":
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return CtrInput; });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__("../../../core/@angular/core.es5.js");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__angular_forms__ = __webpack_require__("../../../forms/@angular/forms.es5.js");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_rxjs_Observable__ = __webpack_require__("../../../../rxjs/Observable.js");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_rxjs_Observable___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2_rxjs_Observable__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__ctr_completer__ = __webpack_require__("../../../../ng2-completer/directives/ctr-completer.js");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__globals__ = __webpack_require__("../../../../ng2-completer/globals.js");
+
+
+
+
+
+// keyboard events
+var KEY_DW = 40;
+var KEY_RT = 39;
+var KEY_UP = 38;
+var KEY_LF = 37;
+var KEY_ES = 27;
+var KEY_EN = 13;
+var KEY_TAB = 9;
+var KEY_BK = 8;
+var KEY_SH = 16;
+var KEY_CL = 20;
+var KEY_F1 = 112;
+var KEY_F12 = 123;
+var CtrInput = (function () {
+    function CtrInput(completer, ngModel, el) {
+        var _this = this;
+        this.completer = completer;
+        this.ngModel = ngModel;
+        this.el = el;
+        this.clearSelected = false;
+        this.clearUnselected = false;
+        this.overrideSuggested = false;
+        this.fillHighlighted = true;
+        this.openOnFocus = false;
+        this.openOnClick = false;
+        this.selectOnClick = false;
+        this.ngModelChange = new __WEBPACK_IMPORTED_MODULE_0__angular_core__["w" /* EventEmitter */]();
+        this._searchStr = "";
+        this._displayStr = "";
+        this.blurTimer = null;
+        this.completer.selected.subscribe(function (item) {
+            if (!item) {
+                return;
+            }
+            if (_this.clearSelected) {
+                _this.searchStr = "";
+            }
+            else {
+                _this.searchStr = item.title;
+            }
+            _this.ngModelChange.emit(_this.searchStr);
+        });
+        this.completer.highlighted.subscribe(function (item) {
+            if (_this.fillHighlighted) {
+                if (item) {
+                    _this._displayStr = item.title;
+                    _this.ngModelChange.emit(item.title);
+                }
+                else {
+                    _this._displayStr = _this.searchStr;
+                    _this.ngModelChange.emit(_this.searchStr);
+                }
+            }
+        });
+        this.completer.dataSourceChange.subscribe(function () {
+            _this.searchStr = "";
+            _this.ngModelChange.emit(_this.searchStr);
+        });
+        if (this.ngModel.valueChanges) {
+            this.ngModel.valueChanges.subscribe(function (value) {
+                if (!Object(__WEBPACK_IMPORTED_MODULE_4__globals__["g" /* isNil */])(value) && _this._displayStr !== value) {
+                    if (_this.searchStr !== value) {
+                        _this.completer.search(value);
+                    }
+                    _this.searchStr = value;
+                }
+            });
+        }
+    }
+    CtrInput.prototype.keyupHandler = function (event) {
+        if (event.keyCode === KEY_LF || event.keyCode === KEY_RT || event.keyCode === KEY_TAB) {
+            // do nothing
+            return;
+        }
+        if (event.keyCode === KEY_UP || event.keyCode === KEY_EN) {
+            event.preventDefault();
+        }
+        else if (event.keyCode === KEY_DW) {
+            event.preventDefault();
+            this.completer.search(this.searchStr);
+        }
+        else if (event.keyCode === KEY_ES) {
+            if (this.completer.isOpen) {
+                this.restoreSearchValue();
+                this.completer.clear();
+                event.stopPropagation();
+                event.preventDefault();
+            }
+        }
+    };
+    CtrInput.prototype.pasteHandler = function (event) {
+        this.completer.open();
+    };
+    CtrInput.prototype.keydownHandler = function (event) {
+        var keyCode = event.keyCode || event.which;
+        if (keyCode === KEY_EN) {
+            if (this.completer.hasHighlighted()) {
+                event.preventDefault();
+            }
+            this.handleSelection();
+        }
+        else if (keyCode === KEY_DW) {
+            event.preventDefault();
+            this.completer.open();
+            this.completer.nextRow();
+        }
+        else if (keyCode === KEY_UP) {
+            event.preventDefault();
+            this.completer.prevRow();
+        }
+        else if (keyCode === KEY_TAB) {
+            this.handleSelection();
+        }
+        else if (keyCode === KEY_BK) {
+            this.completer.open();
+        }
+        else if (keyCode === KEY_ES) {
+            // This is very specific to IE10/11 #272
+            // without this, IE clears the input text
+            event.preventDefault();
+            if (this.completer.isOpen) {
+                event.stopPropagation();
+            }
+        }
+        else {
+            if (keyCode !== 0 && keyCode !== KEY_SH && keyCode !== KEY_CL &&
+                (keyCode <= KEY_F1 || keyCode >= KEY_F12) &&
+                !event.ctrlKey && !event.metaKey && !event.altKey) {
+                this.completer.open();
+            }
+        }
+    };
+    CtrInput.prototype.onBlur = function (event) {
+        var _this = this;
+        // Check if we need to cancel Blur for IE
+        if (this.completer.isCancelBlur()) {
+            setTimeout(function () {
+                // get the focus back
+                _this.el.nativeElement.focus();
+            }, 0);
+            return;
+        }
+        if (this.completer.isOpen) {
+            this.blurTimer = __WEBPACK_IMPORTED_MODULE_2_rxjs_Observable__["Observable"].timer(200).subscribe(function () { return _this.doBlur(); });
+        }
+    };
+    CtrInput.prototype.onfocus = function () {
+        if (this.blurTimer) {
+            this.blurTimer.unsubscribe();
+            this.blurTimer = null;
+        }
+        if (this.openOnFocus) {
+            this.completer.open();
+        }
+    };
+    CtrInput.prototype.onClick = function (event) {
+        if (this.selectOnClick) {
+            this.el.nativeElement.select();
+        }
+        if (this.openOnClick) {
+            if (this.completer.isOpen) {
+                this.completer.clear();
+            }
+            else {
+                this.completer.open();
+            }
+        }
+    };
+    Object.defineProperty(CtrInput.prototype, "searchStr", {
+        get: function () {
+            return this._searchStr;
+        },
+        set: function (term) {
+            this._searchStr = term;
+            this._displayStr = term;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    CtrInput.prototype.handleSelection = function () {
+        if (this.completer.hasHighlighted()) {
+            this._searchStr = "";
+            this.completer.selectCurrent();
+        }
+        else if (this.overrideSuggested) {
+            this.completer.onSelected({ title: this.searchStr, originalObject: null });
+        }
+        else {
+            this.completer.clear();
+        }
+    };
+    CtrInput.prototype.restoreSearchValue = function () {
+        if (this.fillHighlighted) {
+            if (this._displayStr != this.searchStr) {
+                this._displayStr = this.searchStr;
+                this.ngModelChange.emit(this.searchStr);
+            }
+        }
+    };
+    CtrInput.prototype.doBlur = function () {
+        if (this.blurTimer) {
+            this.blurTimer.unsubscribe();
+            this.blurTimer = null;
+        }
+        if (this.overrideSuggested) {
+            this.completer.onSelected({ title: this.searchStr, originalObject: null });
+        }
+        else {
+            if (this.clearUnselected && !this.completer.hasSelected) {
+                this.searchStr = "";
+                this.ngModelChange.emit(this.searchStr);
+            }
+            else {
+                this.restoreSearchValue();
+            }
+        }
+        this.completer.clear();
+    };
+    CtrInput.decorators = [
+        { type: __WEBPACK_IMPORTED_MODULE_0__angular_core__["t" /* Directive */], args: [{
+                    selector: "[ctrInput]",
+                },] },
+    ];
+    /** @nocollapse */
+    CtrInput.ctorParameters = function () { return [
+        { type: __WEBPACK_IMPORTED_MODULE_3__ctr_completer__["a" /* CtrCompleter */], decorators: [{ type: __WEBPACK_IMPORTED_MODULE_0__angular_core__["x" /* Host */] },] },
+        { type: __WEBPACK_IMPORTED_MODULE_1__angular_forms__["d" /* NgModel */], },
+        { type: __WEBPACK_IMPORTED_MODULE_0__angular_core__["u" /* ElementRef */], },
+    ]; };
+    CtrInput.propDecorators = {
+        'clearSelected': [{ type: __WEBPACK_IMPORTED_MODULE_0__angular_core__["E" /* Input */], args: ["clearSelected",] },],
+        'clearUnselected': [{ type: __WEBPACK_IMPORTED_MODULE_0__angular_core__["E" /* Input */], args: ["clearUnselected",] },],
+        'overrideSuggested': [{ type: __WEBPACK_IMPORTED_MODULE_0__angular_core__["E" /* Input */], args: ["overrideSuggested",] },],
+        'fillHighlighted': [{ type: __WEBPACK_IMPORTED_MODULE_0__angular_core__["E" /* Input */], args: ["fillHighlighted",] },],
+        'openOnFocus': [{ type: __WEBPACK_IMPORTED_MODULE_0__angular_core__["E" /* Input */], args: ["openOnFocus",] },],
+        'openOnClick': [{ type: __WEBPACK_IMPORTED_MODULE_0__angular_core__["E" /* Input */], args: ["openOnClick",] },],
+        'selectOnClick': [{ type: __WEBPACK_IMPORTED_MODULE_0__angular_core__["E" /* Input */], args: ["selectOnClick",] },],
+        'ngModelChange': [{ type: __WEBPACK_IMPORTED_MODULE_0__angular_core__["R" /* Output */] },],
+        'keyupHandler': [{ type: __WEBPACK_IMPORTED_MODULE_0__angular_core__["z" /* HostListener */], args: ["keyup", ["$event"],] },],
+        'pasteHandler': [{ type: __WEBPACK_IMPORTED_MODULE_0__angular_core__["z" /* HostListener */], args: ["paste", ["$event"],] },],
+        'keydownHandler': [{ type: __WEBPACK_IMPORTED_MODULE_0__angular_core__["z" /* HostListener */], args: ["keydown", ["$event"],] },],
+        'onBlur': [{ type: __WEBPACK_IMPORTED_MODULE_0__angular_core__["z" /* HostListener */], args: ["blur", ["$event"],] },],
+        'onfocus': [{ type: __WEBPACK_IMPORTED_MODULE_0__angular_core__["z" /* HostListener */], args: ["focus", [],] },],
+        'onClick': [{ type: __WEBPACK_IMPORTED_MODULE_0__angular_core__["z" /* HostListener */], args: ["click", ["$event"],] },],
+    };
+    return CtrInput;
+}());
+
+//# sourceMappingURL=ctr-input.js.map
+
+/***/ }),
+
+/***/ "../../../../ng2-completer/directives/ctr-list.js":
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* unused harmony export CtrListContext */
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return CtrList; });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_rxjs_add_observable_timer__ = __webpack_require__("../../../../rxjs/add/observable/timer.js");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_rxjs_add_observable_timer___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_rxjs_add_observable_timer__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__angular_core__ = __webpack_require__("../../../core/@angular/core.es5.js");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_rxjs_Observable__ = __webpack_require__("../../../../rxjs/Observable.js");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_rxjs_Observable___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2_rxjs_Observable__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_rxjs_add_operator_retryWhen__ = __webpack_require__("../../../../rxjs/add/operator/retryWhen.js");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_rxjs_add_operator_retryWhen___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_3_rxjs_add_operator_retryWhen__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4_rxjs_add_operator_do__ = __webpack_require__("../../../../rxjs/add/operator/do.js");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4_rxjs_add_operator_do___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_4_rxjs_add_operator_do__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__ctr_completer__ = __webpack_require__("../../../../ng2-completer/directives/ctr-completer.js");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__globals__ = __webpack_require__("../../../../ng2-completer/globals.js");
+
+
+
+
+
+
+
+var CtrListContext = (function () {
+    function CtrListContext(results, searching, searchInitialized, isOpen) {
+        this.results = results;
+        this.searching = searching;
+        this.searchInitialized = searchInitialized;
+        this.isOpen = isOpen;
+    }
+    return CtrListContext;
+}());
+
+var CtrList = (function () {
+    function CtrList(completer, templateRef, viewContainer, cd) {
+        this.completer = completer;
+        this.templateRef = templateRef;
+        this.viewContainer = viewContainer;
+        this.cd = cd;
+        this.ctrListMinSearchLength = __WEBPACK_IMPORTED_MODULE_6__globals__["c" /* MIN_SEARCH_LENGTH */];
+        this.ctrListPause = __WEBPACK_IMPORTED_MODULE_6__globals__["d" /* PAUSE */];
+        this.ctrListAutoMatch = false;
+        this.ctrListAutoHighlight = false;
+        this.ctrListDisplaySearching = true;
+        // private results: CompleterItem[] = [];
+        this.term = null;
+        // private searching = false;
+        this.searchTimer = null;
+        this.clearTimer = null;
+        this.ctx = new CtrListContext([], false, false, false);
+        this._initialValue = null;
+        this.viewRef = null;
+    }
+    CtrList.prototype.ngOnInit = function () {
+        this.completer.registerList(this);
+        this.viewRef = this.viewContainer.createEmbeddedView(this.templateRef, new CtrListContext([], false, false, false));
+    };
+    Object.defineProperty(CtrList.prototype, "dataService", {
+        set: function (newService) {
+            this._dataService = newService;
+            this.dataServiceSubscribe();
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(CtrList.prototype, "initialValue", {
+        set: function (value) {
+            var _this = this;
+            if (this._dataService && typeof this._dataService.convertToItem === "function") {
+                setTimeout(function () {
+                    var initialItem = _this._dataService.convertToItem(value);
+                    if (initialItem) {
+                        _this.completer.onSelected(initialItem, false);
+                    }
+                });
+            }
+            else if (!this._dataService) {
+                this._initialValue = value;
+            }
+        },
+        enumerable: true,
+        configurable: true
+    });
+    CtrList.prototype.search = function (term) {
+        var _this = this;
+        if (!Object(__WEBPACK_IMPORTED_MODULE_6__globals__["g" /* isNil */])(term) && term.length >= this.ctrListMinSearchLength && this.term !== term) {
+            if (this.searchTimer) {
+                this.searchTimer.unsubscribe();
+                this.searchTimer = null;
+            }
+            if (!this.ctx.searching) {
+                if (this.ctrListDisplaySearching) {
+                    this.ctx.results = [];
+                }
+                this.ctx.searching = true;
+                this.ctx.searchInitialized = true;
+                this.refreshTemplate();
+            }
+            if (this.clearTimer) {
+                this.clearTimer.unsubscribe();
+            }
+            this.searchTimer = __WEBPACK_IMPORTED_MODULE_2_rxjs_Observable__["Observable"].timer(this.ctrListPause).subscribe(function () {
+                _this.searchTimerComplete(term);
+            });
+        }
+        else if (!Object(__WEBPACK_IMPORTED_MODULE_6__globals__["g" /* isNil */])(term) && term.length < this.ctrListMinSearchLength) {
+            this.clear();
+            this.term = "";
+        }
+    };
+    CtrList.prototype.clear = function () {
+        var _this = this;
+        if (this.searchTimer) {
+            this.searchTimer.unsubscribe();
+        }
+        this.clearTimer = __WEBPACK_IMPORTED_MODULE_2_rxjs_Observable__["Observable"].timer(__WEBPACK_IMPORTED_MODULE_6__globals__["a" /* CLEAR_TIMEOUT */]).subscribe(function () {
+            _this._clear();
+        });
+    };
+    CtrList.prototype.open = function () {
+        if (!this.ctx.searchInitialized) {
+            this.search("");
+        }
+        this.refreshTemplate();
+    };
+    CtrList.prototype.isOpen = function (open) {
+        this.ctx.isOpen = open;
+    };
+    CtrList.prototype._clear = function () {
+        if (this.searchTimer) {
+            this.searchTimer.unsubscribe();
+            this.searchTimer = null;
+        }
+        if (this.dataService) {
+            this.dataService.cancel();
+        }
+        this.viewContainer.clear();
+        this.viewRef = null;
+    };
+    CtrList.prototype.searchTimerComplete = function (term) {
+        // Begin the search
+        if (Object(__WEBPACK_IMPORTED_MODULE_6__globals__["g" /* isNil */])(term) || term.length < this.ctrListMinSearchLength) {
+            this.ctx.searching = false;
+            return;
+        }
+        this.term = term;
+        this._dataService.search(term);
+    };
+    CtrList.prototype.refreshTemplate = function () {
+        // create the template if it doesn't exist
+        if (!this.viewRef) {
+            this.viewRef = this.viewContainer.createEmbeddedView(this.templateRef, this.ctx);
+        }
+        else if (!this.viewRef.destroyed) {
+            // refresh the template
+            this.viewRef.context.isOpen = this.ctx.isOpen;
+            this.viewRef.context.results = this.ctx.results;
+            this.viewRef.context.searching = this.ctx.searching;
+            this.viewRef.context.searchInitialized = this.ctx.searchInitialized;
+            this.viewRef.detectChanges();
+        }
+        this.cd.markForCheck();
+    };
+    CtrList.prototype.getBestMatchIndex = function () {
+        var _this = this;
+        if (!this.ctx.results || !this.term) {
+            return null;
+        }
+        // First try to find the exact term
+        var bestMatch = this.ctx.results.findIndex(function (item) { return item.title.toLowerCase() === _this.term.toLocaleLowerCase(); });
+        // If not try to find the first item that starts with the term
+        if (bestMatch < 0) {
+            bestMatch = this.ctx.results.findIndex(function (item) { return item.title.toLowerCase().startsWith(_this.term.toLocaleLowerCase()); });
+        }
+        // If not try to find the first item that includes the term
+        if (bestMatch < 0) {
+            bestMatch = this.ctx.results.findIndex(function (item) { return item.title.toLowerCase().includes(_this.term.toLocaleLowerCase()); });
+        }
+        return bestMatch < 0 ? null : bestMatch;
+    };
+    CtrList.prototype.dataServiceSubscribe = function () {
+        var _this = this;
+        if (this._dataService) {
+            this._dataService
+                .catch(function (err) {
+                console.error(err);
+                console.error("Unexpected error in dataService: errors should be handled by the dataService Observable");
+                return [];
+            })
+                .subscribe(function (results) {
+                _this.ctx.searchInitialized = true;
+                _this.ctx.searching = false;
+                _this.ctx.results = results;
+                if (_this.ctrListAutoMatch && results && results.length === 1 && results[0].title && !Object(__WEBPACK_IMPORTED_MODULE_6__globals__["g" /* isNil */])(_this.term) &&
+                    results[0].title.toLocaleLowerCase() === _this.term.toLocaleLowerCase()) {
+                    // Do automatch
+                    _this.completer.onSelected(results[0]);
+                    return;
+                }
+                if (_this._initialValue) {
+                    _this.initialValue = _this._initialValue;
+                    _this._initialValue = null;
+                }
+                _this.refreshTemplate();
+                if (_this.ctrListAutoHighlight) {
+                    _this.completer.autoHighlightIndex = _this.getBestMatchIndex();
+                }
+            });
+            if (this._dataService.dataSourceChange) {
+                this._dataService.dataSourceChange.subscribe(function () {
+                    _this.term = null;
+                    _this.ctx.searchInitialized = false;
+                    _this.ctx.searching = false;
+                    _this.ctx.results = [];
+                    _this.refreshTemplate();
+                    _this.completer.onDataSourceChange();
+                });
+            }
+        }
+    };
+    CtrList.decorators = [
+        { type: __WEBPACK_IMPORTED_MODULE_1__angular_core__["t" /* Directive */], args: [{
+                    selector: "[ctrList]",
+                },] },
+    ];
+    /** @nocollapse */
+    CtrList.ctorParameters = function () { return [
+        { type: __WEBPACK_IMPORTED_MODULE_5__ctr_completer__["a" /* CtrCompleter */], decorators: [{ type: __WEBPACK_IMPORTED_MODULE_1__angular_core__["x" /* Host */] },] },
+        { type: __WEBPACK_IMPORTED_MODULE_1__angular_core__["_9" /* TemplateRef */], },
+        { type: __WEBPACK_IMPORTED_MODULE_1__angular_core__["_15" /* ViewContainerRef */], },
+        { type: __WEBPACK_IMPORTED_MODULE_1__angular_core__["k" /* ChangeDetectorRef */], },
+    ]; };
+    CtrList.propDecorators = {
+        'ctrListMinSearchLength': [{ type: __WEBPACK_IMPORTED_MODULE_1__angular_core__["E" /* Input */] },],
+        'ctrListPause': [{ type: __WEBPACK_IMPORTED_MODULE_1__angular_core__["E" /* Input */] },],
+        'ctrListAutoMatch': [{ type: __WEBPACK_IMPORTED_MODULE_1__angular_core__["E" /* Input */] },],
+        'ctrListAutoHighlight': [{ type: __WEBPACK_IMPORTED_MODULE_1__angular_core__["E" /* Input */] },],
+        'ctrListDisplaySearching': [{ type: __WEBPACK_IMPORTED_MODULE_1__angular_core__["E" /* Input */] },],
+        'dataService': [{ type: __WEBPACK_IMPORTED_MODULE_1__angular_core__["E" /* Input */], args: ["ctrList",] },],
+        'initialValue': [{ type: __WEBPACK_IMPORTED_MODULE_1__angular_core__["E" /* Input */], args: ["ctrListInitialValue",] },],
+    };
+    return CtrList;
+}());
+
+//# sourceMappingURL=ctr-list.js.map
+
+/***/ }),
+
+/***/ "../../../../ng2-completer/directives/ctr-row.js":
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return CtrRow; });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__("../../../core/@angular/core.es5.js");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__ctr_dropdown__ = __webpack_require__("../../../../ng2-completer/directives/ctr-dropdown.js");
+
+
+var CtrRow = (function () {
+    function CtrRow(el, renderer, dropdown) {
+        this.el = el;
+        this.renderer = renderer;
+        this.dropdown = dropdown;
+        this.selected = false;
+    }
+    CtrRow.prototype.ngOnDestroy = function () {
+        if (this._rowIndex) {
+            this.dropdown.unregisterRow(this._rowIndex);
+        }
+    };
+    Object.defineProperty(CtrRow.prototype, "ctrRow", {
+        set: function (index) {
+            this._rowIndex = index;
+            this.dropdown.registerRow(new __WEBPACK_IMPORTED_MODULE_1__ctr_dropdown__["b" /* CtrRowItem */](this, this._rowIndex));
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(CtrRow.prototype, "dataItem", {
+        set: function (item) {
+            this._item = item;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    CtrRow.prototype.onClick = function (event) {
+        this.dropdown.onSelected(this._item);
+    };
+    CtrRow.prototype.onMouseEnter = function (event) {
+        this.dropdown.highlightRow(this._rowIndex);
+    };
+    CtrRow.prototype.onMouseDown = function (event) {
+        this.dropdown.rowMouseDown();
+    };
+    CtrRow.prototype.setHighlighted = function (selected) {
+        this.selected = selected;
+        this.renderer.setElementClass(this.el.nativeElement, "completer-selected-row", this.selected);
+    };
+    CtrRow.prototype.getNativeElement = function () {
+        return this.el.nativeElement;
+    };
+    CtrRow.prototype.getDataItem = function () {
+        return this._item;
+    };
+    CtrRow.decorators = [
+        { type: __WEBPACK_IMPORTED_MODULE_0__angular_core__["t" /* Directive */], args: [{
+                    selector: "[ctrRow]",
+                },] },
+    ];
+    /** @nocollapse */
+    CtrRow.ctorParameters = function () { return [
+        { type: __WEBPACK_IMPORTED_MODULE_0__angular_core__["u" /* ElementRef */], },
+        { type: __WEBPACK_IMPORTED_MODULE_0__angular_core__["Z" /* Renderer */], },
+        { type: __WEBPACK_IMPORTED_MODULE_1__ctr_dropdown__["a" /* CtrDropdown */], decorators: [{ type: __WEBPACK_IMPORTED_MODULE_0__angular_core__["x" /* Host */] },] },
+    ]; };
+    CtrRow.propDecorators = {
+        'ctrRow': [{ type: __WEBPACK_IMPORTED_MODULE_0__angular_core__["E" /* Input */] },],
+        'dataItem': [{ type: __WEBPACK_IMPORTED_MODULE_0__angular_core__["E" /* Input */] },],
+        'onClick': [{ type: __WEBPACK_IMPORTED_MODULE_0__angular_core__["z" /* HostListener */], args: ["click", ["$event"],] },],
+        'onMouseEnter': [{ type: __WEBPACK_IMPORTED_MODULE_0__angular_core__["z" /* HostListener */], args: ["mouseenter", ["$event"],] },],
+        'onMouseDown': [{ type: __WEBPACK_IMPORTED_MODULE_0__angular_core__["z" /* HostListener */], args: ["mousedown", ["$event"],] },],
+    };
+    return CtrRow;
+}());
+
+//# sourceMappingURL=ctr-row.js.map
+
+/***/ }),
+
+/***/ "../../../../ng2-completer/globals.js":
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "b", function() { return MAX_CHARS; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "c", function() { return MIN_SEARCH_LENGTH; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "d", function() { return PAUSE; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "f", function() { return TEXT_SEARCHING; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "e", function() { return TEXT_NO_RESULTS; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return CLEAR_TIMEOUT; });
+/* harmony export (immutable) */ __webpack_exports__["g"] = isNil;
+var MAX_CHARS = 524288; // the default max length per the html maxlength attribute
+var MIN_SEARCH_LENGTH = 3;
+var PAUSE = 10;
+var TEXT_SEARCHING = "Searching...";
+var TEXT_NO_RESULTS = "No results found";
+var CLEAR_TIMEOUT = 50;
+function isNil(value) {
+    return typeof value === "undefined" || value === null;
+}
+//# sourceMappingURL=globals.js.map
+
+/***/ }),
+
+/***/ "../../../../ng2-completer/index.js":
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__ng2_completer_module__ = __webpack_require__("../../../../ng2-completer/ng2-completer.module.js");
+/* harmony reexport (binding) */ __webpack_require__.d(__webpack_exports__, "b", function() { return __WEBPACK_IMPORTED_MODULE_0__ng2_completer_module__["a"]; });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__components_completer_cmp__ = __webpack_require__("../../../../ng2-completer/components/completer-cmp.js");
+/* unused harmony reexport CompleterCmp */
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__components_completer_list_item_cmp__ = __webpack_require__("../../../../ng2-completer/components/completer-list-item-cmp.js");
+/* unused harmony reexport CompleterListItemCmp */
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__services_completer_service__ = __webpack_require__("../../../../ng2-completer/services/completer-service.js");
+/* harmony reexport (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return __WEBPACK_IMPORTED_MODULE_3__services_completer_service__["a"]; });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__services_completer_data_factory__ = __webpack_require__("../../../../ng2-completer/services/completer-data-factory.js");
+/* unused harmony reexport localDataFactory */
+/* unused harmony reexport LocalDataFactoryProvider */
+/* unused harmony reexport remoteDataFactory */
+/* unused harmony reexport RemoteDataFactoryProvider */
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__services_local_data__ = __webpack_require__("../../../../ng2-completer/services/local-data.js");
+/* unused harmony reexport LocalData */
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__services_remote_data__ = __webpack_require__("../../../../ng2-completer/services/remote-data.js");
+/* unused harmony reexport RemoteData */
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__services_completer_base_data__ = __webpack_require__("../../../../ng2-completer/services/completer-base-data.js");
+/* unused harmony reexport CompleterBaseData */
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__directives_ctr_completer__ = __webpack_require__("../../../../ng2-completer/directives/ctr-completer.js");
+/* unused harmony reexport CtrCompleter */
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__directives_ctr_dropdown__ = __webpack_require__("../../../../ng2-completer/directives/ctr-dropdown.js");
+/* unused harmony reexport CtrDropdown */
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__directives_ctr_input__ = __webpack_require__("../../../../ng2-completer/directives/ctr-input.js");
+/* unused harmony reexport CtrInput */
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_11__directives_ctr_list__ = __webpack_require__("../../../../ng2-completer/directives/ctr-list.js");
+/* unused harmony reexport CtrList */
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_12__directives_ctr_row__ = __webpack_require__("../../../../ng2-completer/directives/ctr-row.js");
+/* unused harmony reexport CtrRow */
+
+
+
+
+
+
+
+
+
+
+
+
+
+//# sourceMappingURL=index.js.map
+
+/***/ }),
+
+/***/ "../../../../ng2-completer/ng2-completer.module.js":
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return Ng2CompleterModule; });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__("../../../core/@angular/core.es5.js");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__angular_forms__ = __webpack_require__("../../../forms/@angular/forms.es5.js");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__angular_http__ = __webpack_require__("../../../http/@angular/http.es5.js");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__components_completer_cmp__ = __webpack_require__("../../../../ng2-completer/components/completer-cmp.js");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__components_completer_list_item_cmp__ = __webpack_require__("../../../../ng2-completer/components/completer-list-item-cmp.js");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__services_completer_service__ = __webpack_require__("../../../../ng2-completer/services/completer-service.js");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__services_completer_data_factory__ = __webpack_require__("../../../../ng2-completer/services/completer-data-factory.js");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__directives_ctr_completer__ = __webpack_require__("../../../../ng2-completer/directives/ctr-completer.js");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__directives_ctr_dropdown__ = __webpack_require__("../../../../ng2-completer/directives/ctr-dropdown.js");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__directives_ctr_input__ = __webpack_require__("../../../../ng2-completer/directives/ctr-input.js");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__directives_ctr_list__ = __webpack_require__("../../../../ng2-completer/directives/ctr-list.js");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_11__directives_ctr_row__ = __webpack_require__("../../../../ng2-completer/directives/ctr-row.js");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_12__angular_common__ = __webpack_require__("../../../common/@angular/common.es5.js");
+
+
+
+
+
+
+
+
+
+
+
+
+
+var Ng2CompleterModule = (function () {
+    function Ng2CompleterModule() {
+    }
+    Ng2CompleterModule.decorators = [
+        { type: __WEBPACK_IMPORTED_MODULE_0__angular_core__["L" /* NgModule */], args: [{
+                    imports: [
+                        __WEBPACK_IMPORTED_MODULE_12__angular_common__["a" /* CommonModule */],
+                        __WEBPACK_IMPORTED_MODULE_1__angular_forms__["b" /* FormsModule */],
+                        __WEBPACK_IMPORTED_MODULE_2__angular_http__["c" /* HttpModule */]
+                    ],
+                    declarations: [
+                        __WEBPACK_IMPORTED_MODULE_4__components_completer_list_item_cmp__["a" /* CompleterListItemCmp */],
+                        __WEBPACK_IMPORTED_MODULE_7__directives_ctr_completer__["a" /* CtrCompleter */],
+                        __WEBPACK_IMPORTED_MODULE_8__directives_ctr_dropdown__["a" /* CtrDropdown */],
+                        __WEBPACK_IMPORTED_MODULE_9__directives_ctr_input__["a" /* CtrInput */],
+                        __WEBPACK_IMPORTED_MODULE_10__directives_ctr_list__["a" /* CtrList */],
+                        __WEBPACK_IMPORTED_MODULE_11__directives_ctr_row__["a" /* CtrRow */],
+                        __WEBPACK_IMPORTED_MODULE_3__components_completer_cmp__["a" /* CompleterCmp */]
+                    ],
+                    exports: [
+                        __WEBPACK_IMPORTED_MODULE_3__components_completer_cmp__["a" /* CompleterCmp */],
+                        __WEBPACK_IMPORTED_MODULE_4__components_completer_list_item_cmp__["a" /* CompleterListItemCmp */],
+                        __WEBPACK_IMPORTED_MODULE_7__directives_ctr_completer__["a" /* CtrCompleter */],
+                        __WEBPACK_IMPORTED_MODULE_8__directives_ctr_dropdown__["a" /* CtrDropdown */],
+                        __WEBPACK_IMPORTED_MODULE_9__directives_ctr_input__["a" /* CtrInput */],
+                        __WEBPACK_IMPORTED_MODULE_10__directives_ctr_list__["a" /* CtrList */],
+                        __WEBPACK_IMPORTED_MODULE_11__directives_ctr_row__["a" /* CtrRow */]
+                    ],
+                    providers: [
+                        __WEBPACK_IMPORTED_MODULE_5__services_completer_service__["a" /* CompleterService */],
+                        __WEBPACK_IMPORTED_MODULE_6__services_completer_data_factory__["a" /* LocalDataFactoryProvider */],
+                        __WEBPACK_IMPORTED_MODULE_6__services_completer_data_factory__["b" /* RemoteDataFactoryProvider */]
+                    ]
+                },] },
+    ];
+    /** @nocollapse */
+    Ng2CompleterModule.ctorParameters = function () { return []; };
+    return Ng2CompleterModule;
+}());
+
+//# sourceMappingURL=ng2-completer.module.js.map
+
+/***/ }),
+
+/***/ "../../../../ng2-completer/services/completer-base-data.js":
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return CompleterBaseData; });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_rxjs_Subject__ = __webpack_require__("../../../../rxjs/Subject.js");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_rxjs_Subject___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_rxjs_Subject__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__globals__ = __webpack_require__("../../../../ng2-completer/globals.js");
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = Object.setPrototypeOf ||
+        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
+
+
+var CompleterBaseData = (function (_super) {
+    __extends(CompleterBaseData, _super);
+    function CompleterBaseData() {
+        return _super.call(this) || this;
+    }
+    CompleterBaseData.prototype.cancel = function () { };
+    CompleterBaseData.prototype.searchFields = function (searchFields) {
+        this._searchFields = searchFields;
+        return this;
+    };
+    CompleterBaseData.prototype.titleField = function (titleField) {
+        this._titleField = titleField;
+        return this;
+    };
+    CompleterBaseData.prototype.descriptionField = function (descriptionField) {
+        this._descriptionField = descriptionField;
+        return this;
+    };
+    CompleterBaseData.prototype.imageField = function (imageField) {
+        this._imageField = imageField;
+        return this;
+    };
+    CompleterBaseData.prototype.convertToItem = function (data) {
+        var image = null;
+        var formattedText;
+        var formattedDesc = null;
+        if (this._titleField) {
+            formattedText = this.extractTitle(data);
+        }
+        else {
+            formattedText = data;
+        }
+        if (this._descriptionField) {
+            formattedDesc = this.extractValue(data, this._descriptionField);
+        }
+        if (this._imageField) {
+            image = this.extractValue(data, this._imageField);
+        }
+        if (Object(__WEBPACK_IMPORTED_MODULE_1__globals__["g" /* isNil */])(formattedText)) {
+            return null;
+        }
+        return {
+            title: formattedText,
+            description: formattedDesc,
+            image: image,
+            originalObject: data
+        };
+    };
+    CompleterBaseData.prototype.extractMatches = function (data, term) {
+        var _this = this;
+        var matches = [];
+        var searchFields = this._searchFields ? this._searchFields.split(",") : null;
+        if (this._searchFields !== null && this._searchFields !== undefined && term != "") {
+            matches = data.filter(function (item) {
+                var values = searchFields ? searchFields.map(function (searchField) { return _this.extractValue(item, searchField); }).filter(function (value) { return !!value; }) : [item];
+                return values.some(function (value) { return value.toString().toLowerCase().indexOf(term.toString().toLowerCase()) >= 0; });
+            });
+        }
+        else {
+            matches = data;
+        }
+        return matches;
+    };
+    CompleterBaseData.prototype.extractTitle = function (item) {
+        var _this = this;
+        // split title fields and run extractValue for each and join with ' '
+        return this._titleField.split(",")
+            .map(function (field) {
+            return _this.extractValue(item, field);
+        })
+            .reduce(function (acc, titlePart) { return acc ? acc + " " + titlePart : titlePart; });
+    };
+    CompleterBaseData.prototype.extractValue = function (obj, key) {
+        var keys;
+        var result;
+        if (key) {
+            keys = key.split(".");
+            result = obj;
+            for (var i = 0; i < keys.length; i++) {
+                if (result) {
+                    result = result[keys[i]];
+                }
+            }
+        }
+        else {
+            result = obj;
+        }
+        return result;
+    };
+    CompleterBaseData.prototype.processResults = function (matches) {
+        var i;
+        var results = [];
+        if (matches && matches.length > 0) {
+            for (i = 0; i < matches.length; i++) {
+                var item = this.convertToItem(matches[i]);
+                if (item) {
+                    results.push(item);
+                }
+            }
+        }
+        return results;
+    };
+    return CompleterBaseData;
+}(__WEBPACK_IMPORTED_MODULE_0_rxjs_Subject__["Subject"]));
+
+//# sourceMappingURL=completer-base-data.js.map
+
+/***/ }),
+
+/***/ "../../../../ng2-completer/services/completer-data-factory.js":
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* unused harmony export localDataFactory */
+/* unused harmony export remoteDataFactory */
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return LocalDataFactoryProvider; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "b", function() { return RemoteDataFactoryProvider; });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_http__ = __webpack_require__("../../../http/@angular/http.es5.js");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__local_data__ = __webpack_require__("../../../../ng2-completer/services/local-data.js");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__remote_data__ = __webpack_require__("../../../../ng2-completer/services/remote-data.js");
+
+
+
+function localDataFactory() {
+    return function () {
+        return new __WEBPACK_IMPORTED_MODULE_1__local_data__["a" /* LocalData */]();
+    };
+}
+function remoteDataFactory(http) {
+    return function () {
+        return new __WEBPACK_IMPORTED_MODULE_2__remote_data__["a" /* RemoteData */](http);
+    };
+}
+var LocalDataFactoryProvider = { provide: __WEBPACK_IMPORTED_MODULE_1__local_data__["a" /* LocalData */], useFactory: localDataFactory };
+var RemoteDataFactoryProvider = { provide: __WEBPACK_IMPORTED_MODULE_2__remote_data__["a" /* RemoteData */], useFactory: remoteDataFactory, deps: [__WEBPACK_IMPORTED_MODULE_0__angular_http__["b" /* Http */]] };
+//# sourceMappingURL=completer-data-factory.js.map
+
+/***/ }),
+
+/***/ "../../../../ng2-completer/services/completer-service.js":
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return CompleterService; });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__("../../../core/@angular/core.es5.js");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__local_data__ = __webpack_require__("../../../../ng2-completer/services/local-data.js");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__remote_data__ = __webpack_require__("../../../../ng2-completer/services/remote-data.js");
+
+
+
+var CompleterService = (function () {
+    function CompleterService(localDataFactory, // Using any instead of () => LocalData because on AoT errors
+        remoteDataFactory // Using any instead of () => LocalData because on AoT errors
+    ) {
+        this.localDataFactory = localDataFactory;
+        this.remoteDataFactory = remoteDataFactory; // Using any instead of () => LocalData because on AoT errors
+    }
+    CompleterService.prototype.local = function (data, searchFields, titleField) {
+        if (searchFields === void 0) { searchFields = ""; }
+        if (titleField === void 0) { titleField = ""; }
+        var localData = this.localDataFactory();
+        return localData
+            .data(data)
+            .searchFields(searchFields)
+            .titleField(titleField);
+    };
+    CompleterService.prototype.remote = function (url, searchFields, titleField) {
+        if (searchFields === void 0) { searchFields = ""; }
+        if (titleField === void 0) { titleField = ""; }
+        var remoteData = this.remoteDataFactory();
+        return remoteData
+            .remoteUrl(url)
+            .searchFields(searchFields)
+            .titleField(titleField);
+    };
+    CompleterService.decorators = [
+        { type: __WEBPACK_IMPORTED_MODULE_0__angular_core__["B" /* Injectable */] },
+    ];
+    /** @nocollapse */
+    CompleterService.ctorParameters = function () { return [
+        { type: undefined, decorators: [{ type: __WEBPACK_IMPORTED_MODULE_0__angular_core__["A" /* Inject */], args: [__WEBPACK_IMPORTED_MODULE_1__local_data__["a" /* LocalData */],] },] },
+        { type: undefined, decorators: [{ type: __WEBPACK_IMPORTED_MODULE_0__angular_core__["A" /* Inject */], args: [__WEBPACK_IMPORTED_MODULE_2__remote_data__["a" /* RemoteData */],] },] },
+    ]; };
+    return CompleterService;
+}());
+
+//# sourceMappingURL=completer-service.js.map
+
+/***/ }),
+
+/***/ "../../../../ng2-completer/services/local-data.js":
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return LocalData; });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__("../../../core/@angular/core.es5.js");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_rxjs_Observable__ = __webpack_require__("../../../../rxjs/Observable.js");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_rxjs_Observable___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1_rxjs_Observable__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_rxjs_add_operator_catch__ = __webpack_require__("../../../../rxjs/add/operator/catch.js");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_rxjs_add_operator_catch___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2_rxjs_add_operator_catch__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__completer_base_data__ = __webpack_require__("../../../../ng2-completer/services/completer-base-data.js");
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = Object.setPrototypeOf ||
+        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
+
+
+
+
+var LocalData = (function (_super) {
+    __extends(LocalData, _super);
+    function LocalData() {
+        var _this = _super.call(this) || this;
+        _this.dataSourceChange = new __WEBPACK_IMPORTED_MODULE_0__angular_core__["w" /* EventEmitter */]();
+        return _this;
+    }
+    LocalData.prototype.data = function (data) {
+        var _this = this;
+        if (data instanceof __WEBPACK_IMPORTED_MODULE_1_rxjs_Observable__["Observable"]) {
+            var data$ = data;
+            data$
+                .catch(function () { return []; })
+                .subscribe(function (res) {
+                _this._data = res;
+                if (_this.savedTerm) {
+                    _this.search(_this.savedTerm);
+                }
+                _this.dataSourceChange.emit();
+            });
+        }
+        else {
+            this._data = data;
+        }
+        this.dataSourceChange.emit();
+        return this;
+    };
+    LocalData.prototype.search = function (term) {
+        if (!this._data) {
+            this.savedTerm = term;
+        }
+        else {
+            this.savedTerm = null;
+            var matches = this.extractMatches(this._data, term);
+            this.next(this.processResults(matches));
+        }
+    };
+    LocalData.prototype.convertToItem = function (data) {
+        return _super.prototype.convertToItem.call(this, data);
+    };
+    LocalData.decorators = [
+        { type: __WEBPACK_IMPORTED_MODULE_0__angular_core__["B" /* Injectable */] },
+    ];
+    /** @nocollapse */
+    LocalData.ctorParameters = function () { return []; };
+    return LocalData;
+}(__WEBPACK_IMPORTED_MODULE_3__completer_base_data__["a" /* CompleterBaseData */]));
+
+//# sourceMappingURL=local-data.js.map
+
+/***/ }),
+
+/***/ "../../../../ng2-completer/services/remote-data.js":
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return RemoteData; });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__("../../../core/@angular/core.es5.js");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__angular_http__ = __webpack_require__("../../../http/@angular/http.es5.js");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_rxjs_add_operator_map__ = __webpack_require__("../../../../rxjs/add/operator/map.js");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_rxjs_add_operator_map___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2_rxjs_add_operator_map__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_rxjs_add_operator_catch__ = __webpack_require__("../../../../rxjs/add/operator/catch.js");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_rxjs_add_operator_catch___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_3_rxjs_add_operator_catch__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__completer_base_data__ = __webpack_require__("../../../../ng2-completer/services/completer-base-data.js");
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = Object.setPrototypeOf ||
+        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
+
+
+
+
+
+var RemoteData = (function (_super) {
+    __extends(RemoteData, _super);
+    function RemoteData(http) {
+        var _this = _super.call(this) || this;
+        _this.http = http;
+        _this.dataSourceChange = new __WEBPACK_IMPORTED_MODULE_0__angular_core__["w" /* EventEmitter */]();
+        _this._urlFormater = null;
+        _this._dataField = null;
+        return _this;
+    }
+    RemoteData.prototype.remoteUrl = function (remoteUrl) {
+        this._remoteUrl = remoteUrl;
+        this.dataSourceChange.emit();
+        return this;
+    };
+    RemoteData.prototype.urlFormater = function (urlFormater) {
+        this._urlFormater = urlFormater;
+    };
+    RemoteData.prototype.dataField = function (dataField) {
+        this._dataField = dataField;
+    };
+    /**
+     * @deprecated Please use the requestOptions to pass headers with the search request
+     */
+    RemoteData.prototype.headers = function (headers) {
+        this._headers = headers;
+    };
+    RemoteData.prototype.requestOptions = function (requestOptions) {
+        this._requestOptions = requestOptions;
+    };
+    RemoteData.prototype.search = function (term) {
+        var _this = this;
+        this.cancel();
+        // let params = {};
+        var url = "";
+        if (this._urlFormater) {
+            url = this._urlFormater(term);
+        }
+        else {
+            url = this._remoteUrl + encodeURIComponent(term);
+        }
+        /*
+         * If requestOptions are provided, they will override anything set in headers.
+         *
+         * If no requestOptions are provided, a new RequestOptions object will be instantiated,
+         * and either the provided headers or a new Headers() object will be sent.
+         */
+        if (!this._requestOptions) {
+            this._requestOptions = new __WEBPACK_IMPORTED_MODULE_1__angular_http__["d" /* RequestOptions */]();
+            this._requestOptions.headers = this._headers || new __WEBPACK_IMPORTED_MODULE_1__angular_http__["a" /* Headers */]();
+        }
+        this.remoteSearch = this.http.get(url, this._requestOptions.merge())
+            .map(function (res) { return res.json(); })
+            .map(function (data) {
+            var matches = _this.extractValue(data, _this._dataField);
+            return _this.extractMatches(matches, term);
+        })
+            .catch(function () { return []; })
+            .subscribe(function (matches) {
+            var results = _this.processResults(matches);
+            _this.next(results);
+        });
+    };
+    RemoteData.prototype.cancel = function () {
+        if (this.remoteSearch) {
+            this.remoteSearch.unsubscribe();
+        }
+    };
+    RemoteData.prototype.convertToItem = function (data) {
+        return _super.prototype.convertToItem.call(this, data);
+    };
+    return RemoteData;
+}(__WEBPACK_IMPORTED_MODULE_4__completer_base_data__["a" /* CompleterBaseData */]));
+
+//# sourceMappingURL=remote-data.js.map
+
+/***/ }),
+
 /***/ "../../../../rxjs/InnerSubscriber.js":
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -438,6 +2226,62 @@ var OuterSubscriber = (function (_super) {
 }(Subscriber_1.Subscriber));
 exports.OuterSubscriber = OuterSubscriber;
 //# sourceMappingURL=OuterSubscriber.js.map
+
+/***/ }),
+
+/***/ "../../../../rxjs/Scheduler.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/**
+ * An execution context and a data structure to order tasks and schedule their
+ * execution. Provides a notion of (potentially virtual) time, through the
+ * `now()` getter method.
+ *
+ * Each unit of work in a Scheduler is called an {@link Action}.
+ *
+ * ```ts
+ * class Scheduler {
+ *   now(): number;
+ *   schedule(work, delay?, state?): Subscription;
+ * }
+ * ```
+ *
+ * @class Scheduler
+ */
+var Scheduler = (function () {
+    function Scheduler(SchedulerAction, now) {
+        if (now === void 0) { now = Scheduler.now; }
+        this.SchedulerAction = SchedulerAction;
+        this.now = now;
+    }
+    /**
+     * Schedules a function, `work`, for execution. May happen at some point in
+     * the future, according to the `delay` parameter, if specified. May be passed
+     * some context object, `state`, which will be passed to the `work` function.
+     *
+     * The given arguments will be processed an stored as an Action object in a
+     * queue of actions.
+     *
+     * @param {function(state: ?T): ?Subscription} work A function representing a
+     * task, or some unit of work to be executed by the Scheduler.
+     * @param {number} [delay] Time to wait before executing the work, where the
+     * time unit is implicit and defined by the Scheduler itself.
+     * @param {T} [state] Some contextual data that the `work` function uses when
+     * called by the Scheduler.
+     * @return {Subscription} A subscription in order to be able to unsubscribe
+     * the scheduled work.
+     */
+    Scheduler.prototype.schedule = function (work, delay, state) {
+        if (delay === void 0) { delay = 0; }
+        return new this.SchedulerAction(this, work).schedule(state, delay);
+    };
+    Scheduler.now = Date.now ? Date.now : function () { return +new Date(); };
+    return Scheduler;
+}());
+exports.Scheduler = Scheduler;
+//# sourceMappingURL=Scheduler.js.map
 
 /***/ }),
 
@@ -1131,6 +2975,68 @@ function flattenUnsubscriptionErrors(errors) {
     return errors.reduce(function (errs, err) { return errs.concat((err instanceof UnsubscriptionError_1.UnsubscriptionError) ? err.errors : err); }, []);
 }
 //# sourceMappingURL=Subscription.js.map
+
+/***/ }),
+
+/***/ "../../../../rxjs/add/observable/timer.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var Observable_1 = __webpack_require__("../../../../rxjs/Observable.js");
+var timer_1 = __webpack_require__("../../../../rxjs/observable/timer.js");
+Observable_1.Observable.timer = timer_1.timer;
+//# sourceMappingURL=timer.js.map
+
+/***/ }),
+
+/***/ "../../../../rxjs/add/operator/catch.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var Observable_1 = __webpack_require__("../../../../rxjs/Observable.js");
+var catch_1 = __webpack_require__("../../../../rxjs/operator/catch.js");
+Observable_1.Observable.prototype.catch = catch_1._catch;
+Observable_1.Observable.prototype._catch = catch_1._catch;
+//# sourceMappingURL=catch.js.map
+
+/***/ }),
+
+/***/ "../../../../rxjs/add/operator/do.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var Observable_1 = __webpack_require__("../../../../rxjs/Observable.js");
+var do_1 = __webpack_require__("../../../../rxjs/operator/do.js");
+Observable_1.Observable.prototype.do = do_1._do;
+Observable_1.Observable.prototype._do = do_1._do;
+//# sourceMappingURL=do.js.map
+
+/***/ }),
+
+/***/ "../../../../rxjs/add/operator/map.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var Observable_1 = __webpack_require__("../../../../rxjs/Observable.js");
+var map_1 = __webpack_require__("../../../../rxjs/operator/map.js");
+Observable_1.Observable.prototype.map = map_1.map;
+//# sourceMappingURL=map.js.map
+
+/***/ }),
+
+/***/ "../../../../rxjs/add/operator/retryWhen.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var Observable_1 = __webpack_require__("../../../../rxjs/Observable.js");
+var retryWhen_1 = __webpack_require__("../../../../rxjs/operator/retryWhen.js");
+Observable_1.Observable.prototype.retryWhen = retryWhen_1.retryWhen;
+//# sourceMappingURL=retryWhen.js.map
 
 /***/ }),
 
@@ -1851,6 +3757,120 @@ exports.ScalarObservable = ScalarObservable;
 
 /***/ }),
 
+/***/ "../../../../rxjs/observable/TimerObservable.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __extends = (this && this.__extends) || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+};
+var isNumeric_1 = __webpack_require__("../../../../rxjs/util/isNumeric.js");
+var Observable_1 = __webpack_require__("../../../../rxjs/Observable.js");
+var async_1 = __webpack_require__("../../../../rxjs/scheduler/async.js");
+var isScheduler_1 = __webpack_require__("../../../../rxjs/util/isScheduler.js");
+var isDate_1 = __webpack_require__("../../../../rxjs/util/isDate.js");
+/**
+ * We need this JSDoc comment for affecting ESDoc.
+ * @extends {Ignored}
+ * @hide true
+ */
+var TimerObservable = (function (_super) {
+    __extends(TimerObservable, _super);
+    function TimerObservable(dueTime, period, scheduler) {
+        if (dueTime === void 0) { dueTime = 0; }
+        _super.call(this);
+        this.period = -1;
+        this.dueTime = 0;
+        if (isNumeric_1.isNumeric(period)) {
+            this.period = Number(period) < 1 && 1 || Number(period);
+        }
+        else if (isScheduler_1.isScheduler(period)) {
+            scheduler = period;
+        }
+        if (!isScheduler_1.isScheduler(scheduler)) {
+            scheduler = async_1.async;
+        }
+        this.scheduler = scheduler;
+        this.dueTime = isDate_1.isDate(dueTime) ?
+            (+dueTime - this.scheduler.now()) :
+            dueTime;
+    }
+    /**
+     * Creates an Observable that starts emitting after an `initialDelay` and
+     * emits ever increasing numbers after each `period` of time thereafter.
+     *
+     * <span class="informal">Its like {@link interval}, but you can specify when
+     * should the emissions start.</span>
+     *
+     * <img src="./img/timer.png" width="100%">
+     *
+     * `timer` returns an Observable that emits an infinite sequence of ascending
+     * integers, with a constant interval of time, `period` of your choosing
+     * between those emissions. The first emission happens after the specified
+     * `initialDelay`. The initial delay may be a {@link Date}. By default, this
+     * operator uses the `async` IScheduler to provide a notion of time, but you
+     * may pass any IScheduler to it. If `period` is not specified, the output
+     * Observable emits only one value, `0`. Otherwise, it emits an infinite
+     * sequence.
+     *
+     * @example <caption>Emits ascending numbers, one every second (1000ms), starting after 3 seconds</caption>
+     * var numbers = Rx.Observable.timer(3000, 1000);
+     * numbers.subscribe(x => console.log(x));
+     *
+     * @example <caption>Emits one number after five seconds</caption>
+     * var numbers = Rx.Observable.timer(5000);
+     * numbers.subscribe(x => console.log(x));
+     *
+     * @see {@link interval}
+     * @see {@link delay}
+     *
+     * @param {number|Date} initialDelay The initial delay time to wait before
+     * emitting the first value of `0`.
+     * @param {number} [period] The period of time between emissions of the
+     * subsequent numbers.
+     * @param {Scheduler} [scheduler=async] The IScheduler to use for scheduling
+     * the emission of values, and providing a notion of "time".
+     * @return {Observable} An Observable that emits a `0` after the
+     * `initialDelay` and ever increasing numbers after each `period` of time
+     * thereafter.
+     * @static true
+     * @name timer
+     * @owner Observable
+     */
+    TimerObservable.create = function (initialDelay, period, scheduler) {
+        if (initialDelay === void 0) { initialDelay = 0; }
+        return new TimerObservable(initialDelay, period, scheduler);
+    };
+    TimerObservable.dispatch = function (state) {
+        var index = state.index, period = state.period, subscriber = state.subscriber;
+        var action = this;
+        subscriber.next(index);
+        if (subscriber.closed) {
+            return;
+        }
+        else if (period === -1) {
+            return subscriber.complete();
+        }
+        state.index = index + 1;
+        action.schedule(state, period);
+    };
+    TimerObservable.prototype._subscribe = function (subscriber) {
+        var index = 0;
+        var _a = this, period = _a.period, dueTime = _a.dueTime, scheduler = _a.scheduler;
+        return scheduler.schedule(TimerObservable.dispatch, dueTime, {
+            index: index, period: period, subscriber: subscriber
+        });
+    };
+    return TimerObservable;
+}(Observable_1.Observable));
+exports.TimerObservable = TimerObservable;
+//# sourceMappingURL=TimerObservable.js.map
+
+/***/ }),
+
 /***/ "../../../../rxjs/observable/forkJoin.js":
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -1881,6 +3901,260 @@ exports.fromPromise = PromiseObservable_1.PromiseObservable.create;
 var merge_1 = __webpack_require__("../../../../rxjs/operator/merge.js");
 exports.merge = merge_1.mergeStatic;
 //# sourceMappingURL=merge.js.map
+
+/***/ }),
+
+/***/ "../../../../rxjs/observable/timer.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var TimerObservable_1 = __webpack_require__("../../../../rxjs/observable/TimerObservable.js");
+exports.timer = TimerObservable_1.TimerObservable.create;
+//# sourceMappingURL=timer.js.map
+
+/***/ }),
+
+/***/ "../../../../rxjs/operator/catch.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __extends = (this && this.__extends) || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+};
+var OuterSubscriber_1 = __webpack_require__("../../../../rxjs/OuterSubscriber.js");
+var subscribeToResult_1 = __webpack_require__("../../../../rxjs/util/subscribeToResult.js");
+/**
+ * Catches errors on the observable to be handled by returning a new observable or throwing an error.
+ *
+ * <img src="./img/catch.png" width="100%">
+ *
+ * @example <caption>Continues with a different Observable when there's an error</caption>
+ *
+ * Observable.of(1, 2, 3, 4, 5)
+ *   .map(n => {
+ * 	   if (n == 4) {
+ * 	     throw 'four!';
+ *     }
+ *	   return n;
+ *   })
+ *   .catch(err => Observable.of('I', 'II', 'III', 'IV', 'V'))
+ *   .subscribe(x => console.log(x));
+ *   // 1, 2, 3, I, II, III, IV, V
+ *
+ * @example <caption>Retries the caught source Observable again in case of error, similar to retry() operator</caption>
+ *
+ * Observable.of(1, 2, 3, 4, 5)
+ *   .map(n => {
+ * 	   if (n === 4) {
+ * 	     throw 'four!';
+ *     }
+ * 	   return n;
+ *   })
+ *   .catch((err, caught) => caught)
+ *   .take(30)
+ *   .subscribe(x => console.log(x));
+ *   // 1, 2, 3, 1, 2, 3, ...
+ *
+ * @example <caption>Throws a new error when the source Observable throws an error</caption>
+ *
+ * Observable.of(1, 2, 3, 4, 5)
+ *   .map(n => {
+ *     if (n == 4) {
+ *       throw 'four!';
+ *     }
+ *     return n;
+ *   })
+ *   .catch(err => {
+ *     throw 'error in source. Details: ' + err;
+ *   })
+ *   .subscribe(
+ *     x => console.log(x),
+ *     err => console.log(err)
+ *   );
+ *   // 1, 2, 3, error in source. Details: four!
+ *
+ * @param {function} selector a function that takes as arguments `err`, which is the error, and `caught`, which
+ *  is the source observable, in case you'd like to "retry" that observable by returning it again. Whatever observable
+ *  is returned by the `selector` will be used to continue the observable chain.
+ * @return {Observable} An observable that originates from either the source or the observable returned by the
+ *  catch `selector` function.
+ * @method catch
+ * @name catch
+ * @owner Observable
+ */
+function _catch(selector) {
+    var operator = new CatchOperator(selector);
+    var caught = this.lift(operator);
+    return (operator.caught = caught);
+}
+exports._catch = _catch;
+var CatchOperator = (function () {
+    function CatchOperator(selector) {
+        this.selector = selector;
+    }
+    CatchOperator.prototype.call = function (subscriber, source) {
+        return source.subscribe(new CatchSubscriber(subscriber, this.selector, this.caught));
+    };
+    return CatchOperator;
+}());
+/**
+ * We need this JSDoc comment for affecting ESDoc.
+ * @ignore
+ * @extends {Ignored}
+ */
+var CatchSubscriber = (function (_super) {
+    __extends(CatchSubscriber, _super);
+    function CatchSubscriber(destination, selector, caught) {
+        _super.call(this, destination);
+        this.selector = selector;
+        this.caught = caught;
+    }
+    // NOTE: overriding `error` instead of `_error` because we don't want
+    // to have this flag this subscriber as `isStopped`. We can mimic the
+    // behavior of the RetrySubscriber (from the `retry` operator), where
+    // we unsubscribe from our source chain, reset our Subscriber flags,
+    // then subscribe to the selector result.
+    CatchSubscriber.prototype.error = function (err) {
+        if (!this.isStopped) {
+            var result = void 0;
+            try {
+                result = this.selector(err, this.caught);
+            }
+            catch (err2) {
+                _super.prototype.error.call(this, err2);
+                return;
+            }
+            this._unsubscribeAndRecycle();
+            this.add(subscribeToResult_1.subscribeToResult(this, result));
+        }
+    };
+    return CatchSubscriber;
+}(OuterSubscriber_1.OuterSubscriber));
+//# sourceMappingURL=catch.js.map
+
+/***/ }),
+
+/***/ "../../../../rxjs/operator/do.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __extends = (this && this.__extends) || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+};
+var Subscriber_1 = __webpack_require__("../../../../rxjs/Subscriber.js");
+/* tslint:enable:max-line-length */
+/**
+ * Perform a side effect for every emission on the source Observable, but return
+ * an Observable that is identical to the source.
+ *
+ * <span class="informal">Intercepts each emission on the source and runs a
+ * function, but returns an output which is identical to the source as long as errors don't occur.</span>
+ *
+ * <img src="./img/do.png" width="100%">
+ *
+ * Returns a mirrored Observable of the source Observable, but modified so that
+ * the provided Observer is called to perform a side effect for every value,
+ * error, and completion emitted by the source. Any errors that are thrown in
+ * the aforementioned Observer or handlers are safely sent down the error path
+ * of the output Observable.
+ *
+ * This operator is useful for debugging your Observables for the correct values
+ * or performing other side effects.
+ *
+ * Note: this is different to a `subscribe` on the Observable. If the Observable
+ * returned by `do` is not subscribed, the side effects specified by the
+ * Observer will never happen. `do` therefore simply spies on existing
+ * execution, it does not trigger an execution to happen like `subscribe` does.
+ *
+ * @example <caption>Map every click to the clientX position of that click, while also logging the click event</caption>
+ * var clicks = Rx.Observable.fromEvent(document, 'click');
+ * var positions = clicks
+ *   .do(ev => console.log(ev))
+ *   .map(ev => ev.clientX);
+ * positions.subscribe(x => console.log(x));
+ *
+ * @see {@link map}
+ * @see {@link subscribe}
+ *
+ * @param {Observer|function} [nextOrObserver] A normal Observer object or a
+ * callback for `next`.
+ * @param {function} [error] Callback for errors in the source.
+ * @param {function} [complete] Callback for the completion of the source.
+ * @return {Observable} An Observable identical to the source, but runs the
+ * specified Observer or callback(s) for each item.
+ * @method do
+ * @name do
+ * @owner Observable
+ */
+function _do(nextOrObserver, error, complete) {
+    return this.lift(new DoOperator(nextOrObserver, error, complete));
+}
+exports._do = _do;
+var DoOperator = (function () {
+    function DoOperator(nextOrObserver, error, complete) {
+        this.nextOrObserver = nextOrObserver;
+        this.error = error;
+        this.complete = complete;
+    }
+    DoOperator.prototype.call = function (subscriber, source) {
+        return source.subscribe(new DoSubscriber(subscriber, this.nextOrObserver, this.error, this.complete));
+    };
+    return DoOperator;
+}());
+/**
+ * We need this JSDoc comment for affecting ESDoc.
+ * @ignore
+ * @extends {Ignored}
+ */
+var DoSubscriber = (function (_super) {
+    __extends(DoSubscriber, _super);
+    function DoSubscriber(destination, nextOrObserver, error, complete) {
+        _super.call(this, destination);
+        var safeSubscriber = new Subscriber_1.Subscriber(nextOrObserver, error, complete);
+        safeSubscriber.syncErrorThrowable = true;
+        this.add(safeSubscriber);
+        this.safeSubscriber = safeSubscriber;
+    }
+    DoSubscriber.prototype._next = function (value) {
+        var safeSubscriber = this.safeSubscriber;
+        safeSubscriber.next(value);
+        if (safeSubscriber.syncErrorThrown) {
+            this.destination.error(safeSubscriber.syncErrorValue);
+        }
+        else {
+            this.destination.next(value);
+        }
+    };
+    DoSubscriber.prototype._error = function (err) {
+        var safeSubscriber = this.safeSubscriber;
+        safeSubscriber.error(err);
+        if (safeSubscriber.syncErrorThrown) {
+            this.destination.error(safeSubscriber.syncErrorValue);
+        }
+        else {
+            this.destination.error(err);
+        }
+    };
+    DoSubscriber.prototype._complete = function () {
+        var safeSubscriber = this.safeSubscriber;
+        safeSubscriber.complete();
+        if (safeSubscriber.syncErrorThrown) {
+            this.destination.error(safeSubscriber.syncErrorValue);
+        }
+        else {
+            this.destination.complete();
+        }
+    };
+    return DoSubscriber;
+}(Subscriber_1.Subscriber));
+//# sourceMappingURL=do.js.map
 
 /***/ }),
 
@@ -2312,6 +4586,114 @@ exports.MulticastOperator = MulticastOperator;
 
 /***/ }),
 
+/***/ "../../../../rxjs/operator/retryWhen.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __extends = (this && this.__extends) || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+};
+var Subject_1 = __webpack_require__("../../../../rxjs/Subject.js");
+var tryCatch_1 = __webpack_require__("../../../../rxjs/util/tryCatch.js");
+var errorObject_1 = __webpack_require__("../../../../rxjs/util/errorObject.js");
+var OuterSubscriber_1 = __webpack_require__("../../../../rxjs/OuterSubscriber.js");
+var subscribeToResult_1 = __webpack_require__("../../../../rxjs/util/subscribeToResult.js");
+/**
+ * Returns an Observable that mirrors the source Observable with the exception of an `error`. If the source Observable
+ * calls `error`, this method will emit the Throwable that caused the error to the Observable returned from `notifier`.
+ * If that Observable calls `complete` or `error` then this method will call `complete` or `error` on the child
+ * subscription. Otherwise this method will resubscribe to the source Observable.
+ *
+ * <img src="./img/retryWhen.png" width="100%">
+ *
+ * @param {function(errors: Observable): Observable} notifier - Receives an Observable of notifications with which a
+ * user can `complete` or `error`, aborting the retry.
+ * @return {Observable} The source Observable modified with retry logic.
+ * @method retryWhen
+ * @owner Observable
+ */
+function retryWhen(notifier) {
+    return this.lift(new RetryWhenOperator(notifier, this));
+}
+exports.retryWhen = retryWhen;
+var RetryWhenOperator = (function () {
+    function RetryWhenOperator(notifier, source) {
+        this.notifier = notifier;
+        this.source = source;
+    }
+    RetryWhenOperator.prototype.call = function (subscriber, source) {
+        return source.subscribe(new RetryWhenSubscriber(subscriber, this.notifier, this.source));
+    };
+    return RetryWhenOperator;
+}());
+/**
+ * We need this JSDoc comment for affecting ESDoc.
+ * @ignore
+ * @extends {Ignored}
+ */
+var RetryWhenSubscriber = (function (_super) {
+    __extends(RetryWhenSubscriber, _super);
+    function RetryWhenSubscriber(destination, notifier, source) {
+        _super.call(this, destination);
+        this.notifier = notifier;
+        this.source = source;
+    }
+    RetryWhenSubscriber.prototype.error = function (err) {
+        if (!this.isStopped) {
+            var errors = this.errors;
+            var retries = this.retries;
+            var retriesSubscription = this.retriesSubscription;
+            if (!retries) {
+                errors = new Subject_1.Subject();
+                retries = tryCatch_1.tryCatch(this.notifier)(errors);
+                if (retries === errorObject_1.errorObject) {
+                    return _super.prototype.error.call(this, errorObject_1.errorObject.e);
+                }
+                retriesSubscription = subscribeToResult_1.subscribeToResult(this, retries);
+            }
+            else {
+                this.errors = null;
+                this.retriesSubscription = null;
+            }
+            this._unsubscribeAndRecycle();
+            this.errors = errors;
+            this.retries = retries;
+            this.retriesSubscription = retriesSubscription;
+            errors.next(err);
+        }
+    };
+    RetryWhenSubscriber.prototype._unsubscribe = function () {
+        var _a = this, errors = _a.errors, retriesSubscription = _a.retriesSubscription;
+        if (errors) {
+            errors.unsubscribe();
+            this.errors = null;
+        }
+        if (retriesSubscription) {
+            retriesSubscription.unsubscribe();
+            this.retriesSubscription = null;
+        }
+        this.retries = null;
+    };
+    RetryWhenSubscriber.prototype.notifyNext = function (outerValue, innerValue, outerIndex, innerIndex, innerSub) {
+        var _a = this, errors = _a.errors, retries = _a.retries, retriesSubscription = _a.retriesSubscription;
+        this.errors = null;
+        this.retries = null;
+        this.retriesSubscription = null;
+        this._unsubscribeAndRecycle();
+        this.errors = errors;
+        this.retries = retries;
+        this.retriesSubscription = retriesSubscription;
+        this.source.subscribe(this);
+    };
+    return RetryWhenSubscriber;
+}(OuterSubscriber_1.OuterSubscriber));
+//# sourceMappingURL=retryWhen.js.map
+
+/***/ }),
+
 /***/ "../../../../rxjs/operator/share.js":
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -2419,6 +4801,318 @@ function toPromise(PromiseCtor) {
 }
 exports.toPromise = toPromise;
 //# sourceMappingURL=toPromise.js.map
+
+/***/ }),
+
+/***/ "../../../../rxjs/scheduler/Action.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __extends = (this && this.__extends) || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+};
+var Subscription_1 = __webpack_require__("../../../../rxjs/Subscription.js");
+/**
+ * A unit of work to be executed in a {@link Scheduler}. An action is typically
+ * created from within a Scheduler and an RxJS user does not need to concern
+ * themselves about creating and manipulating an Action.
+ *
+ * ```ts
+ * class Action<T> extends Subscription {
+ *   new (scheduler: Scheduler, work: (state?: T) => void);
+ *   schedule(state?: T, delay: number = 0): Subscription;
+ * }
+ * ```
+ *
+ * @class Action<T>
+ */
+var Action = (function (_super) {
+    __extends(Action, _super);
+    function Action(scheduler, work) {
+        _super.call(this);
+    }
+    /**
+     * Schedules this action on its parent Scheduler for execution. May be passed
+     * some context object, `state`. May happen at some point in the future,
+     * according to the `delay` parameter, if specified.
+     * @param {T} [state] Some contextual data that the `work` function uses when
+     * called by the Scheduler.
+     * @param {number} [delay] Time to wait before executing the work, where the
+     * time unit is implicit and defined by the Scheduler.
+     * @return {void}
+     */
+    Action.prototype.schedule = function (state, delay) {
+        if (delay === void 0) { delay = 0; }
+        return this;
+    };
+    return Action;
+}(Subscription_1.Subscription));
+exports.Action = Action;
+//# sourceMappingURL=Action.js.map
+
+/***/ }),
+
+/***/ "../../../../rxjs/scheduler/AsyncAction.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __extends = (this && this.__extends) || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+};
+var root_1 = __webpack_require__("../../../../rxjs/util/root.js");
+var Action_1 = __webpack_require__("../../../../rxjs/scheduler/Action.js");
+/**
+ * We need this JSDoc comment for affecting ESDoc.
+ * @ignore
+ * @extends {Ignored}
+ */
+var AsyncAction = (function (_super) {
+    __extends(AsyncAction, _super);
+    function AsyncAction(scheduler, work) {
+        _super.call(this, scheduler, work);
+        this.scheduler = scheduler;
+        this.work = work;
+        this.pending = false;
+    }
+    AsyncAction.prototype.schedule = function (state, delay) {
+        if (delay === void 0) { delay = 0; }
+        if (this.closed) {
+            return this;
+        }
+        // Always replace the current state with the new state.
+        this.state = state;
+        // Set the pending flag indicating that this action has been scheduled, or
+        // has recursively rescheduled itself.
+        this.pending = true;
+        var id = this.id;
+        var scheduler = this.scheduler;
+        //
+        // Important implementation note:
+        //
+        // Actions only execute once by default, unless rescheduled from within the
+        // scheduled callback. This allows us to implement single and repeat
+        // actions via the same code path, without adding API surface area, as well
+        // as mimic traditional recursion but across asynchronous boundaries.
+        //
+        // However, JS runtimes and timers distinguish between intervals achieved by
+        // serial `setTimeout` calls vs. a single `setInterval` call. An interval of
+        // serial `setTimeout` calls can be individually delayed, which delays
+        // scheduling the next `setTimeout`, and so on. `setInterval` attempts to
+        // guarantee the interval callback will be invoked more precisely to the
+        // interval period, regardless of load.
+        //
+        // Therefore, we use `setInterval` to schedule single and repeat actions.
+        // If the action reschedules itself with the same delay, the interval is not
+        // canceled. If the action doesn't reschedule, or reschedules with a
+        // different delay, the interval will be canceled after scheduled callback
+        // execution.
+        //
+        if (id != null) {
+            this.id = this.recycleAsyncId(scheduler, id, delay);
+        }
+        this.delay = delay;
+        // If this action has already an async Id, don't request a new one.
+        this.id = this.id || this.requestAsyncId(scheduler, this.id, delay);
+        return this;
+    };
+    AsyncAction.prototype.requestAsyncId = function (scheduler, id, delay) {
+        if (delay === void 0) { delay = 0; }
+        return root_1.root.setInterval(scheduler.flush.bind(scheduler, this), delay);
+    };
+    AsyncAction.prototype.recycleAsyncId = function (scheduler, id, delay) {
+        if (delay === void 0) { delay = 0; }
+        // If this action is rescheduled with the same delay time, don't clear the interval id.
+        if (delay !== null && this.delay === delay && this.pending === false) {
+            return id;
+        }
+        // Otherwise, if the action's delay time is different from the current delay,
+        // or the action has been rescheduled before it's executed, clear the interval id
+        return root_1.root.clearInterval(id) && undefined || undefined;
+    };
+    /**
+     * Immediately executes this action and the `work` it contains.
+     * @return {any}
+     */
+    AsyncAction.prototype.execute = function (state, delay) {
+        if (this.closed) {
+            return new Error('executing a cancelled action');
+        }
+        this.pending = false;
+        var error = this._execute(state, delay);
+        if (error) {
+            return error;
+        }
+        else if (this.pending === false && this.id != null) {
+            // Dequeue if the action didn't reschedule itself. Don't call
+            // unsubscribe(), because the action could reschedule later.
+            // For example:
+            // ```
+            // scheduler.schedule(function doWork(counter) {
+            //   /* ... I'm a busy worker bee ... */
+            //   var originalAction = this;
+            //   /* wait 100ms before rescheduling the action */
+            //   setTimeout(function () {
+            //     originalAction.schedule(counter + 1);
+            //   }, 100);
+            // }, 1000);
+            // ```
+            this.id = this.recycleAsyncId(this.scheduler, this.id, null);
+        }
+    };
+    AsyncAction.prototype._execute = function (state, delay) {
+        var errored = false;
+        var errorValue = undefined;
+        try {
+            this.work(state);
+        }
+        catch (e) {
+            errored = true;
+            errorValue = !!e && e || new Error(e);
+        }
+        if (errored) {
+            this.unsubscribe();
+            return errorValue;
+        }
+    };
+    AsyncAction.prototype._unsubscribe = function () {
+        var id = this.id;
+        var scheduler = this.scheduler;
+        var actions = scheduler.actions;
+        var index = actions.indexOf(this);
+        this.work = null;
+        this.state = null;
+        this.pending = false;
+        this.scheduler = null;
+        if (index !== -1) {
+            actions.splice(index, 1);
+        }
+        if (id != null) {
+            this.id = this.recycleAsyncId(scheduler, id, null);
+        }
+        this.delay = null;
+    };
+    return AsyncAction;
+}(Action_1.Action));
+exports.AsyncAction = AsyncAction;
+//# sourceMappingURL=AsyncAction.js.map
+
+/***/ }),
+
+/***/ "../../../../rxjs/scheduler/AsyncScheduler.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __extends = (this && this.__extends) || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+};
+var Scheduler_1 = __webpack_require__("../../../../rxjs/Scheduler.js");
+var AsyncScheduler = (function (_super) {
+    __extends(AsyncScheduler, _super);
+    function AsyncScheduler() {
+        _super.apply(this, arguments);
+        this.actions = [];
+        /**
+         * A flag to indicate whether the Scheduler is currently executing a batch of
+         * queued actions.
+         * @type {boolean}
+         */
+        this.active = false;
+        /**
+         * An internal ID used to track the latest asynchronous task such as those
+         * coming from `setTimeout`, `setInterval`, `requestAnimationFrame`, and
+         * others.
+         * @type {any}
+         */
+        this.scheduled = undefined;
+    }
+    AsyncScheduler.prototype.flush = function (action) {
+        var actions = this.actions;
+        if (this.active) {
+            actions.push(action);
+            return;
+        }
+        var error;
+        this.active = true;
+        do {
+            if (error = action.execute(action.state, action.delay)) {
+                break;
+            }
+        } while (action = actions.shift()); // exhaust the scheduler queue
+        this.active = false;
+        if (error) {
+            while (action = actions.shift()) {
+                action.unsubscribe();
+            }
+            throw error;
+        }
+    };
+    return AsyncScheduler;
+}(Scheduler_1.Scheduler));
+exports.AsyncScheduler = AsyncScheduler;
+//# sourceMappingURL=AsyncScheduler.js.map
+
+/***/ }),
+
+/***/ "../../../../rxjs/scheduler/async.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var AsyncAction_1 = __webpack_require__("../../../../rxjs/scheduler/AsyncAction.js");
+var AsyncScheduler_1 = __webpack_require__("../../../../rxjs/scheduler/AsyncScheduler.js");
+/**
+ *
+ * Async Scheduler
+ *
+ * <span class="informal">Schedule task as if you used setTimeout(task, duration)</span>
+ *
+ * `async` scheduler schedules tasks asynchronously, by putting them on the JavaScript
+ * event loop queue. It is best used to delay tasks in time or to schedule tasks repeating
+ * in intervals.
+ *
+ * If you just want to "defer" task, that is to perform it right after currently
+ * executing synchronous code ends (commonly achieved by `setTimeout(deferredTask, 0)`),
+ * better choice will be the {@link asap} scheduler.
+ *
+ * @example <caption>Use async scheduler to delay task</caption>
+ * const task = () => console.log('it works!');
+ *
+ * Rx.Scheduler.async.schedule(task, 2000);
+ *
+ * // After 2 seconds logs:
+ * // "it works!"
+ *
+ *
+ * @example <caption>Use async scheduler to repeat task in intervals</caption>
+ * function task(state) {
+ *   console.log(state);
+ *   this.schedule(state + 1, 1000); // `this` references currently executing Action,
+ *                                   // which we reschedule with new state and delay
+ * }
+ *
+ * Rx.Scheduler.async.schedule(task, 3000, 0);
+ *
+ * // Logs:
+ * // 0 after 3s
+ * // 1 after 4s
+ * // 2 after 5s
+ * // 3 after 6s
+ *
+ * @static true
+ * @name async
+ * @owner Scheduler
+ */
+exports.async = new AsyncScheduler_1.AsyncScheduler(AsyncAction_1.AsyncAction);
+//# sourceMappingURL=async.js.map
 
 /***/ }),
 
@@ -2614,6 +5308,19 @@ exports.isArrayLike = (function (x) { return x && typeof x.length === 'number'; 
 
 /***/ }),
 
+/***/ "../../../../rxjs/util/isDate.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+function isDate(value) {
+    return value instanceof Date && !isNaN(+value);
+}
+exports.isDate = isDate;
+//# sourceMappingURL=isDate.js.map
+
+/***/ }),
+
 /***/ "../../../../rxjs/util/isFunction.js":
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -2624,6 +5331,25 @@ function isFunction(x) {
 }
 exports.isFunction = isFunction;
 //# sourceMappingURL=isFunction.js.map
+
+/***/ }),
+
+/***/ "../../../../rxjs/util/isNumeric.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var isArray_1 = __webpack_require__("../../../../rxjs/util/isArray.js");
+function isNumeric(val) {
+    // parseFloat NaNs numeric-cast false positives (null|true|false|"")
+    // ...but misinterprets leading-number strings, particularly hex literals ("0x...")
+    // subtraction forces infinities to NaN
+    // adding 1 corrects loss of precision from parseFloat (#15100)
+    return !isArray_1.isArray(val) && (val - parseFloat(val) + 1) >= 0;
+}
+exports.isNumeric = isNumeric;
+;
+//# sourceMappingURL=isNumeric.js.map
 
 /***/ }),
 
@@ -49962,14 +52688,14 @@ function transition$$1(stateChangeExpr, steps) {
 /* unused harmony export AbstractFormGroupDirective */
 /* unused harmony export CheckboxControlValueAccessor */
 /* unused harmony export ControlContainer */
-/* unused harmony export NG_VALUE_ACCESSOR */
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "c", function() { return NG_VALUE_ACCESSOR; });
 /* unused harmony export COMPOSITION_BUFFER_MODE */
 /* unused harmony export DefaultValueAccessor */
 /* unused harmony export NgControl */
 /* unused harmony export NgControlStatus */
 /* unused harmony export NgControlStatusGroup */
 /* unused harmony export NgForm */
-/* unused harmony export NgModel */
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "d", function() { return NgModel; });
 /* unused harmony export NgModelGroup */
 /* unused harmony export RadioControlValueAccessor */
 /* unused harmony export FormControlDirective */
@@ -49989,13 +52715,13 @@ function transition$$1(stateChangeExpr, steps) {
 /* unused harmony export FormBuilder */
 /* unused harmony export AbstractControl */
 /* unused harmony export FormArray */
-/* unused harmony export FormControl */
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return FormControl; });
 /* unused harmony export FormGroup */
 /* unused harmony export NG_ASYNC_VALIDATORS */
 /* unused harmony export NG_VALIDATORS */
 /* unused harmony export Validators */
 /* unused harmony export VERSION */
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return FormsModule; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "b", function() { return FormsModule; });
 /* unused harmony export ReactiveFormsModule */
 /* unused harmony export ɵba */
 /* unused harmony export ɵz */
@@ -56069,7 +58795,7 @@ ReactiveFormsModule.ctorParameters = function () { return []; };
 /* unused harmony export XHRBackend */
 /* unused harmony export XHRConnection */
 /* unused harmony export BaseRequestOptions */
-/* unused harmony export RequestOptions */
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "d", function() { return RequestOptions; });
 /* unused harmony export BaseResponseOptions */
 /* unused harmony export ResponseOptions */
 /* unused harmony export ReadyState */

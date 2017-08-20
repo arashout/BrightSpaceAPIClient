@@ -92,21 +92,23 @@ var _a, _b;
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__angular_http__ = __webpack_require__("../../../http/@angular/http.es5.js");
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__angular_core__ = __webpack_require__("../../../core/@angular/core.es5.js");
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__angular_forms__ = __webpack_require__("../../../forms/@angular/forms.es5.js");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__app_component__ = __webpack_require__("../../../../../src/app/app.component.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__command_bar_command_bar_component__ = __webpack_require__("../../../../../src/app/command-bar/command-bar.component.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__status_bar_status_bar_component__ = __webpack_require__("../../../../../src/app/status-bar/status-bar.component.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__shared_brightspace_api_service__ = __webpack_require__("../../../../../src/app/shared/brightspace-api.service.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__shared_session_service__ = __webpack_require__("../../../../../src/app/shared/session.service.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__shared_message_service__ = __webpack_require__("../../../../../src/app/shared/message.service.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__datatable_container_datatable_datatable_component__ = __webpack_require__("../../../../../src/app/datatable-container/datatable/datatable.component.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_11__datatable_container_datatable_container_component__ = __webpack_require__("../../../../../src/app/datatable-container/datatable-container.component.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_12__message_bar_message_bar_component__ = __webpack_require__("../../../../../src/app/message-bar/message-bar.component.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4_ng2_completer__ = __webpack_require__("../../../../ng2-completer/index.js");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__app_component__ = __webpack_require__("../../../../../src/app/app.component.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__command_bar_command_bar_component__ = __webpack_require__("../../../../../src/app/command-bar/command-bar.component.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__status_bar_status_bar_component__ = __webpack_require__("../../../../../src/app/status-bar/status-bar.component.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__shared_brightspace_api_service__ = __webpack_require__("../../../../../src/app/shared/brightspace-api.service.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__shared_session_service__ = __webpack_require__("../../../../../src/app/shared/session.service.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__shared_message_service__ = __webpack_require__("../../../../../src/app/shared/message.service.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_11__datatable_container_datatable_datatable_component__ = __webpack_require__("../../../../../src/app/datatable-container/datatable/datatable.component.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_12__datatable_container_datatable_container_component__ = __webpack_require__("../../../../../src/app/datatable-container/datatable-container.component.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_13__message_bar_message_bar_component__ = __webpack_require__("../../../../../src/app/message-bar/message-bar.component.ts");
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
+
 
 
 
@@ -128,23 +130,24 @@ var AppModule = (function () {
 AppModule = __decorate([
     Object(__WEBPACK_IMPORTED_MODULE_2__angular_core__["L" /* NgModule */])({
         declarations: [
-            __WEBPACK_IMPORTED_MODULE_4__app_component__["a" /* AppComponent */],
-            __WEBPACK_IMPORTED_MODULE_5__command_bar_command_bar_component__["a" /* CommandBarComponent */],
-            __WEBPACK_IMPORTED_MODULE_6__status_bar_status_bar_component__["a" /* StatusBarComponent */],
-            __WEBPACK_IMPORTED_MODULE_10__datatable_container_datatable_datatable_component__["a" /* DatatableComponent */],
-            __WEBPACK_IMPORTED_MODULE_11__datatable_container_datatable_container_component__["a" /* DatatableContainerComponent */],
-            __WEBPACK_IMPORTED_MODULE_12__message_bar_message_bar_component__["a" /* MessageBarComponent */]
+            __WEBPACK_IMPORTED_MODULE_5__app_component__["a" /* AppComponent */],
+            __WEBPACK_IMPORTED_MODULE_6__command_bar_command_bar_component__["a" /* CommandBarComponent */],
+            __WEBPACK_IMPORTED_MODULE_7__status_bar_status_bar_component__["a" /* StatusBarComponent */],
+            __WEBPACK_IMPORTED_MODULE_11__datatable_container_datatable_datatable_component__["a" /* DatatableComponent */],
+            __WEBPACK_IMPORTED_MODULE_12__datatable_container_datatable_container_component__["a" /* DatatableContainerComponent */],
+            __WEBPACK_IMPORTED_MODULE_13__message_bar_message_bar_component__["a" /* MessageBarComponent */]
         ],
         entryComponents: [
-            __WEBPACK_IMPORTED_MODULE_10__datatable_container_datatable_datatable_component__["a" /* DatatableComponent */]
+            __WEBPACK_IMPORTED_MODULE_11__datatable_container_datatable_datatable_component__["a" /* DatatableComponent */]
         ],
         imports: [
             __WEBPACK_IMPORTED_MODULE_0__angular_platform_browser__["a" /* BrowserModule */],
             __WEBPACK_IMPORTED_MODULE_1__angular_http__["c" /* HttpModule */],
-            __WEBPACK_IMPORTED_MODULE_3__angular_forms__["a" /* FormsModule */]
+            __WEBPACK_IMPORTED_MODULE_3__angular_forms__["b" /* FormsModule */],
+            __WEBPACK_IMPORTED_MODULE_4_ng2_completer__["b" /* Ng2CompleterModule */]
         ],
-        providers: [__WEBPACK_IMPORTED_MODULE_7__shared_brightspace_api_service__["a" /* BrightspaceAPIService */], __WEBPACK_IMPORTED_MODULE_8__shared_session_service__["a" /* SessionService */], __WEBPACK_IMPORTED_MODULE_9__shared_message_service__["c" /* MessageService */]],
-        bootstrap: [__WEBPACK_IMPORTED_MODULE_4__app_component__["a" /* AppComponent */]]
+        providers: [__WEBPACK_IMPORTED_MODULE_8__shared_brightspace_api_service__["a" /* BrightspaceAPIService */], __WEBPACK_IMPORTED_MODULE_9__shared_session_service__["a" /* SessionService */], __WEBPACK_IMPORTED_MODULE_10__shared_message_service__["c" /* MessageService */]],
+        bootstrap: [__WEBPACK_IMPORTED_MODULE_5__app_component__["a" /* AppComponent */]]
     })
 ], AppModule);
 
@@ -173,7 +176,7 @@ module.exports = module.exports.toString();
 /***/ "../../../../../src/app/command-bar/command-bar.component.html":
 /***/ (function(module, exports) {
 
-module.exports = "<div class=\"field\">\n    <label class=\"label\">Base Path</label>\n    <div class=\"control\">\n      <input class=\"input\" type=\"text\" (keyup.enter)=\"onEnter($event)\" [(ngModel)]=\"basePathValue\">\n    </div>\n  </div>\n<div class=\"field\">\n  <label class=\"label\">API Command</label>\n  <div class=\"control\">\n    <input class=\"input\" type=\"text\" (keyup.enter)=\"onEnter($event)\" [(ngModel)]=\"apiCommandValue\">\n  </div>\n</div>\n<div class=\"field\">\n  <label class=\"label\">Query Parameters</label>\n  <div class=\"control\">\n    <textarea class=\"textarea\" type=\"text\" (keyup.enter)=\"onEnter($event)\" [(ngModel)]=\"queryParameterValue\"></textarea>\n  </div>\n</div>\n\n"
+module.exports = "<div class=\"field\">\n    <label class=\"label\">Base Path</label>\n    <div class=\"control\">\n      <input class=\"input\" type=\"text\" (keyup.enter)=\"onEnter($event)\" [(ngModel)]=\"basePathValue\">\n    </div>\n  </div>\n<div class=\"field\">\n  <label class=\"label\">API Command</label>\n  <div class=\"control\">\n      <ng2-completer \n      inputClass=\"input\" \n      [(ngModel)]=\"apiCommandValue\" \n      [datasource]=\"dataService\" \n      [minSearchLength]=\"0\" \n      (keyup)=\"onPress($event)\"></ng2-completer>\n  </div>\n</div>\n<div class=\"field\">\n  <label class=\"label\">Query Parameters</label>\n  <div class=\"control\">\n    <textarea class=\"textarea\" type=\"text\" (keyup.enter)=\"onEnter($event)\" [(ngModel)]=\"queryParameterValue\"></textarea>\n  </div>\n</div>\n\n<div class=\"field\">\n  <label class=\"label\">Previous Commands</label>\n  <div class=\"control\">\n    \n  </div>\n</div>"
 
 /***/ }),
 
@@ -183,9 +186,10 @@ module.exports = "<div class=\"field\">\n    <label class=\"label\">Base Path</l
 "use strict";
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return CommandBarComponent; });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__("../../../core/@angular/core.es5.js");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__shared_brightspace_api_service__ = __webpack_require__("../../../../../src/app/shared/brightspace-api.service.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__shared_message_service__ = __webpack_require__("../../../../../src/app/shared/message.service.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__shared_util__ = __webpack_require__("../../../../../src/app/shared/util.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_ng2_completer__ = __webpack_require__("../../../../ng2-completer/index.js");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__shared_brightspace_api_service__ = __webpack_require__("../../../../../src/app/shared/brightspace-api.service.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__shared_message_service__ = __webpack_require__("../../../../../src/app/shared/message.service.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__shared_util__ = __webpack_require__("../../../../../src/app/shared/util.ts");
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -199,22 +203,35 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 
 
 
+
+var KEY_CODE_ENTER = 13;
 var CommandBarComponent = (function () {
-    function CommandBarComponent(brightspaceService, messageService) {
+    function CommandBarComponent(brightspaceService, messageService, completerService) {
         this.brightspaceService = brightspaceService;
         this.messageService = messageService;
+        this.completerService = completerService;
         // Initialize input values that are two-way data bound
         this.basePathValue = '/d2l/api/lp/1.13/';
         this.apiCommandValue = 'users/';
         this.queryParameterValue = "{}";
+        this.previousCommands = [
+            "users/",
+            "users/whoami"
+        ];
+        this.dataService = completerService.local(this.previousCommands);
     }
+    CommandBarComponent.prototype.onPress = function (event) {
+        if (event.keyCode === KEY_CODE_ENTER) {
+            this.onEnter(event);
+        }
+    };
     CommandBarComponent.prototype.onEnter = function (event) {
         // Validate queryParameterValue to ensure it is valid JSON
-        if (Object(__WEBPACK_IMPORTED_MODULE_3__shared_util__["a" /* isValidJSON */])(this.queryParameterValue)) {
+        if (Object(__WEBPACK_IMPORTED_MODULE_4__shared_util__["a" /* isValidJSON */])(this.queryParameterValue)) {
             this.brightspaceService.getAPIResults(this.basePathValue, this.apiCommandValue, JSON.parse(this.queryParameterValue));
         }
         else {
-            this.messageService.messageUpdated.emit(new __WEBPACK_IMPORTED_MODULE_2__shared_message_service__["a" /* Message */]("Query parameters not valid JSON", "Double check that the query parameters textarea contains valid JSON", 100, 'Remember that all keys and values must be wrapped in double quotations e.g. {"Bookmark":"100"}', __WEBPACK_IMPORTED_MODULE_2__shared_message_service__["b" /* MessageEnum */].IS_DANGER));
+            this.messageService.messageUpdated.emit(new __WEBPACK_IMPORTED_MODULE_3__shared_message_service__["a" /* Message */]("Query parameters not valid JSON", "Double check that the query parameters textarea contains valid JSON", 100, 'Remember that all keys and values must be wrapped in double quotations e.g. {"Bookmark":"100"}', __WEBPACK_IMPORTED_MODULE_3__shared_message_service__["b" /* MessageEnum */].IS_DANGER));
         }
     };
     return CommandBarComponent;
@@ -225,10 +242,10 @@ CommandBarComponent = __decorate([
         template: __webpack_require__("../../../../../src/app/command-bar/command-bar.component.html"),
         styles: [__webpack_require__("../../../../../src/app/command-bar/command-bar.component.css")]
     }),
-    __metadata("design:paramtypes", [typeof (_a = typeof __WEBPACK_IMPORTED_MODULE_1__shared_brightspace_api_service__["a" /* BrightspaceAPIService */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_1__shared_brightspace_api_service__["a" /* BrightspaceAPIService */]) === "function" && _a || Object, typeof (_b = typeof __WEBPACK_IMPORTED_MODULE_2__shared_message_service__["c" /* MessageService */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_2__shared_message_service__["c" /* MessageService */]) === "function" && _b || Object])
+    __metadata("design:paramtypes", [typeof (_a = typeof __WEBPACK_IMPORTED_MODULE_2__shared_brightspace_api_service__["a" /* BrightspaceAPIService */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_2__shared_brightspace_api_service__["a" /* BrightspaceAPIService */]) === "function" && _a || Object, typeof (_b = typeof __WEBPACK_IMPORTED_MODULE_3__shared_message_service__["c" /* MessageService */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_3__shared_message_service__["c" /* MessageService */]) === "function" && _b || Object, typeof (_c = typeof __WEBPACK_IMPORTED_MODULE_1_ng2_completer__["a" /* CompleterService */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_1_ng2_completer__["a" /* CompleterService */]) === "function" && _c || Object])
 ], CommandBarComponent);
 
-var _a, _b;
+var _a, _b, _c;
 //# sourceMappingURL=command-bar.component.js.map
 
 /***/ }),

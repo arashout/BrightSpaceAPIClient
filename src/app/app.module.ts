@@ -3,6 +3,8 @@ import { HttpModule } from '@angular/http';
 import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
+import { Ng2CompleterModule } from "ng2-completer";
+
 import { AppComponent } from './app.component';
 import { CommandBarComponent } from './command-bar/command-bar.component';
 import { StatusBarComponent } from './status-bar/status-bar.component';
@@ -30,7 +32,8 @@ import { MessageBarComponent } from './message-bar/message-bar.component'
   imports: [
     BrowserModule,
     HttpModule,
-    FormsModule
+    FormsModule,
+    Ng2CompleterModule
   ],
   providers: [BrightspaceAPIService, SessionService, MessageService],
   bootstrap: [AppComponent]
